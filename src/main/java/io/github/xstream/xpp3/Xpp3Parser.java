@@ -3,8 +3,6 @@
  * Copyright (c) 2003 Extreme! Lab, Indiana University. All rights reserved.
  *
  * This software is open source. See the bottom of this file for the license.
- *
- * $Id: MXParser.java,v 1.52 2006/11/09 18:29:37 aslom Exp $
  */
 
 package io.github.xstream.xpp3;
@@ -331,15 +329,15 @@ public class Xpp3Parser
     protected static final int READ_CHUNK_SIZE = 8*1024; //max data chars in one read() call
     protected Reader reader;
     protected String inputEncoding;
-    protected InputStream inputStream;
 
 
     protected int bufLoadFactor = 95;  // 99%
     //protected int bufHardLimit;  // only matters when expanding
+    private float bufferLoadFactor = bufLoadFactor / 100f;
 
     protected char buf[] = new char[
         Runtime.getRuntime().freeMemory() > 1000000L ? READ_CHUNK_SIZE : 256 ];
-    protected int bufSoftLimit = ( bufLoadFactor * buf.length ) /100; // desirable size of buffer
+    protected int bufSoftLimit = (int)( bufferLoadFactor * buf.length ) /100; // desirable size of buffer
     protected boolean preventBufferCompaction;
 
     protected int bufAbsoluteStart; // this is buf
@@ -524,13 +522,12 @@ public class Xpp3Parser
         reader = in;
     }
 
-    public void setInput(java.io.InputStream inputStream, String inputEncoding)
+    public void setInput(InputStream inputStream, String inputEncoding)
         throws XmlPullParserException
     {
         if(inputStream == null) {
             throw new IllegalArgumentException("input stream can not be null");
         }
-        this.inputStream = inputStream;
         Reader reader;
         //if(inputEncoding != null) {
         try {
@@ -548,7 +545,7 @@ public class Xpp3Parser
         //    reader = new InputStreamReader(inputStream);
         //}
         setInput(reader);
-        //must be here as reest() was called in setInput() and has set this.inputEncoding to null ...
+        //must be here as reset() was called in setInput() and has set this.inputEncoding to null ...
         this.inputEncoding = inputEncoding;
     }
 
@@ -562,6 +559,18 @@ public class Xpp3Parser
     {
         //      throw new XmlPullParserException("not allowed");
 
+        if ( !replacementText.startsWith( "&#" ) && this.entityName != null && replacementText.length() > 1 )
+        {
+            String tmp = replacementText.substring( 1, replacementText.length() - 1 );
+            for ( int i = 0; i < this.entityName.length; i++ )
+            {
+                if ( this.entityName[i] != null && this.entityName[i].equals( tmp ) )
+                {
+                    replacementText = this.entityReplacement[i];
+                }
+            }
+        }
+        
         //protected char[] entityReplacement[];
         ensureEntityCapacity();
 
@@ -871,7 +880,7 @@ public class Xpp3Parser
     {
         if(eventType != START_TAG) throw new IndexOutOfBoundsException(
                 "only START_TAG can have attributes");
-        if(processNamespaces == false) return NO_NAMESPACE;
+        if(!processNamespaces) return NO_NAMESPACE;
         if(index < 0 || index >= attributeCount) throw new IndexOutOfBoundsException(
                 "attribute position must be 0.."+(attributeCount-1)+" and not "+index);
         return attributeUri[ index ];
@@ -890,7 +899,7 @@ public class Xpp3Parser
     {
         if(eventType != START_TAG) throw new IndexOutOfBoundsException(
                 "only START_TAG can have attributes");
-        if(processNamespaces == false) return null;
+        if(!processNamespaces) return null;
         if(index < 0 || index >= attributeCount) throw new IndexOutOfBoundsException(
                 "attribute position must be 0.."+(attributeCount-1)+" and not "+index);
         return attributePrefix[ index ];
@@ -971,7 +980,7 @@ public class Xpp3Parser
     public void require(int type, String namespace, String name)
         throws XmlPullParserException, IOException
     {
-        if(processNamespaces == false && namespace != null) {
+        if(!processNamespaces && namespace != null) {
             throw new XmlPullParserException(
                 "processing namespaces must be enabled on parser (or factory)"+
                     " to have possible namespaces declared on elements"
@@ -1101,7 +1110,7 @@ public class Xpp3Parser
     }
 
 
-    protected int nextImpl()
+    private int nextImpl()
         throws XmlPullParserException, IOException
     {
         text = null;
@@ -1264,7 +1273,7 @@ public class Xpp3Parser
                     // do content compaction if it makes sense!!!!
 
                 } else if(ch == '&') {
-                    // work on ENTITTY
+                    // work on ENTITY
                     //posEnd = pos - 1;
                     if(tokenize && hadCharData) {
                         seenAmpersand = true;
@@ -1298,10 +1307,10 @@ public class Xpp3Parser
                     }
                     //assert usePC == true;
                     // write into PC replacement text - do merge for replacement text!!!!
-                    for (int i = 0; i < resolvedEntity.length; i++)
+                    for (char aResolvedEntity : resolvedEntity)
                     {
                         if(pcEnd >= pc.length) ensurePC(pcEnd);
-                        pc[pcEnd++] = resolvedEntity[ i ];
+                        pc[pcEnd++] = aResolvedEntity;
 
                     }
                     hadCharData = true;
@@ -1326,7 +1335,7 @@ public class Xpp3Parser
                     hadCharData = true;
 
                     boolean normalizedCR = false;
-                    final boolean normalizeInput = tokenize == false || roundtripSupported == false;
+                    final boolean normalizeInput = !tokenize || !roundtripSupported;
                     // use loop locality here!!!!
                     boolean seenBracket = false;
                     boolean seenBracketBracket = false;
@@ -1353,7 +1362,7 @@ public class Xpp3Parser
                             if(ch == '\r') {
                                 normalizedCR = true;
                                 posEnd = pos -1;
-                                // posEnd is already is set
+                                // posEnd is already set
                                 if(!usePC) {
                                     if(posEnd > posStart) {
                                         joinPC();
@@ -1427,7 +1436,7 @@ public class Xpp3Parser
         seenMarkup = false;
         boolean gotS = false;
         posStart = pos - 1;
-        final boolean normalizeIgnorableWS = tokenize == true && roundtripSupported == false;
+        final boolean normalizeIgnorableWS = tokenize && !roundtripSupported;
         boolean normalizedCR = false;
         while(true) {
             // deal with Misc
@@ -1444,16 +1453,13 @@ public class Xpp3Parser
                 if(ch == '?') {
                     // check if it is 'xml'
                     // deal with XMLDecl
-                    if(parsePI()) {  // make sure to skip XMLDecl
-                        if(tokenize) {
-                            return eventType = PROCESSING_INSTRUCTION;
+                    boolean isXMLDecl = parsePI();
+                    if (tokenize) {
+                        if (isXMLDecl) {
+                            return eventType = START_DOCUMENT;
                         }
-                    } else {
-                        // skip over - continue tokenizing
-                        posStart = pos;
-                        gotS = false;
+                        return eventType = PROCESSING_INSTRUCTION;
                     }
-
                 } else if(ch == '!') {
                     ch = more();
                     if(ch == 'D') {
@@ -1488,7 +1494,7 @@ public class Xpp3Parser
                         normalizedCR = true;
                         //posEnd = pos -1;
                         //joinPC();
-                        // posEnd is already is set
+                        // posEnd is already set
                         if(!usePC) {
                             posEnd = pos -1;
                             if(posEnd > posStart) {
@@ -1534,7 +1540,7 @@ public class Xpp3Parser
             return eventType = END_DOCUMENT;
         }
         boolean gotS = false;
-        final boolean normalizeIgnorableWS = tokenize == true && roundtripSupported == false;
+        final boolean normalizeIgnorableWS = tokenize && !roundtripSupported;
         boolean normalizedCR = false;
         try {
             // epilog: Misc*
@@ -1599,7 +1605,7 @@ public class Xpp3Parser
                                 normalizedCR = true;
                                 //posEnd = pos -1;
                                 //joinPC();
-                                // posEnd is alreadys set
+                                // posEnd is already set
                                 if(!usePC) {
                                     posEnd = pos -1;
                                     if(posEnd > posStart) {
@@ -1645,15 +1651,11 @@ public class Xpp3Parser
         } catch(EOFException ex) {
             reachedEnd = true;
         }
-        if(reachedEnd) {
-            if(tokenize && gotS) {
-                posEnd = pos; // well - this is LAST available character pos
-                return eventType = IGNORABLE_WHITESPACE;
-            }
-            return eventType = END_DOCUMENT;
-        } else {
-            throw new XmlPullParserException("internal error in parseEpilog");
+        if(tokenize && gotS) {
+            posEnd = pos; // well - this is LAST available character pos
+            return eventType = IGNORABLE_WHITESPACE;
         }
+        return eventType = END_DOCUMENT;
     }
 
 
@@ -1798,7 +1800,6 @@ public class Xpp3Parser
             } else if(isNameStartChar(ch)) {
                 ch = parseAttribute();
                 ch = more();
-                continue;
             } else {
                 throw new XmlPullParserException(
                     "start tag unexpected character "+printable(ch), this, null);
@@ -1846,7 +1847,7 @@ public class Xpp3Parser
 
             //TODO
             //[ WFC: Unique Att Spec ]
-            // check attribute uniqueness constraint for attributes that has namespace!!!
+            // check namespaced attribute uniqueness constraint!!!
 
             for (int i = 1; i < attributeCount; i++)
             {
@@ -2055,10 +2056,10 @@ public class Xpp3Parser
                         this, null);
                 }
                 // write into PC replacement text - do merge for replacement text!!!!
-                for (int i = 0; i < resolvedEntity.length; i++)
+                for (char aResolvedEntity : resolvedEntity)
                 {
                     if(pcEnd >= pc.length) ensurePC(pcEnd);
-                    pc[pcEnd++] = resolvedEntity[ i ];
+                    pc[pcEnd++] = aResolvedEntity;
                 }
             } else if(ch == '\t' || ch == '\n' || ch == '\r') {
                 // do attribute value normalization
@@ -2166,16 +2167,21 @@ public class Xpp3Parser
             // parse character reference
             char charRef = 0;
             ch = more();
-            if(ch == 'x') {
+            StringBuilder sb = new StringBuilder();
+            boolean isHex = (ch == 'x');
+            if (isHex) {
                 //encoded in hex
                 while(true) {
                     ch = more();
                     if(ch >= '0' && ch <= '9') {
                         charRef = (char)(charRef * 16 + (ch - '0'));
+                        sb.append(ch);
                     } else if(ch >= 'a' && ch <= 'f') {
                         charRef = (char)(charRef * 16 + (ch - ('a' - 10)));
+                        sb.append(ch);
                     } else if(ch >= 'A' && ch <= 'F') {
                         charRef = (char)(charRef * 16 + (ch - ('A' - 10)));
+                        sb.append(ch);
                     } else if(ch == ';') {
                         break;
                     } else {
@@ -2189,6 +2195,7 @@ public class Xpp3Parser
                 while(true) {
                     if(ch >= '0' && ch <= '9') {
                         charRef = (char)(charRef * 10 + (ch - '0'));
+                        sb.append(ch);
                     } else if(ch == ';') {
                         break;
                     } else {
@@ -2200,9 +2207,17 @@ public class Xpp3Parser
                 }
             }
             posEnd = pos - 1;
-            charRefOneCharBuf[0] = charRef;
+            try {
+                charRefOneCharBuf = Character.toChars(Integer.parseInt(sb.toString(), isHex ? 16 : 10));
+            } catch (IllegalArgumentException e) {
+                throw new XmlPullParserException("character reference (with "
+                    + (isHex ? "hex" : "decimal")
+                    + " value "
+                    + sb.toString()
+                    + ") is invalid", this, null);
+            }
             if(tokenize) {
-                text = newString(charRefOneCharBuf, 0, 1);
+                text = newString(charRefOneCharBuf, 0, charRefOneCharBuf.length);
             }
             return charRefOneCharBuf;
         } else {
@@ -2277,7 +2292,7 @@ public class Xpp3Parser
         }
     }
 
-    protected char[] lookuEntityReplacement(int entitNameLen)
+    protected char[] lookuEntityReplacement(int entityNameLen)
         throws XmlPullParserException, IOException
 
     {
@@ -2286,9 +2301,9 @@ public class Xpp3Parser
             LOOP:
             for (int i = entityEnd - 1; i >= 0; --i)
             {
-                if(hash == entityNameHash[ i ] && entitNameLen == entityNameBuf[ i ].length) {
+                if(hash == entityNameHash[ i ] && entityNameLen == entityNameBuf[ i ].length) {
                     final char[] entityBuf = entityNameBuf[ i ];
-                    for (int j = 0; j < entitNameLen; j++)
+                    for (int j = 0; j < entityNameLen; j++)
                     {
                         if(buf[posStart + j] != entityBuf[j]) continue LOOP;
                     }
@@ -2325,7 +2340,7 @@ public class Xpp3Parser
         final int curLine = lineNumber;
         final int curColumn = columnNumber;
         try {
-            final boolean normalizeIgnorableWS = tokenize == true && roundtripSupported == false;
+            final boolean normalizeIgnorableWS = tokenize && !roundtripSupported;
             boolean normalizedCR = false;
 
             boolean seenDash = false;
@@ -2343,13 +2358,10 @@ public class Xpp3Parser
                         seenDash = true;
                     } else {
                         seenDashDash = true;
-                        seenDash = false;
                     }
                 } else if(ch == '>') {
                     if(seenDashDash) {
                         break;  // found end sequence!!!!
-                    } else {
-                        seenDashDash = false;
                     }
                     seenDash = false;
                 } else {
@@ -2414,12 +2426,13 @@ public class Xpp3Parser
         if(tokenize) posStart = pos;
         final int curLine = lineNumber;
         final int curColumn = columnNumber;
-        int piTargetStart = pos + bufAbsoluteStart;
+        int piTargetStart = pos;
         int piTargetEnd = -1;
-        final boolean normalizeIgnorableWS = tokenize == true && roundtripSupported == false;
+        final boolean normalizeIgnorableWS = tokenize && !roundtripSupported;
         boolean normalizedCR = false;
 
         try {
+            boolean seenPITarget = false;
             boolean seenQ = false;
             char ch = more();
             if(isS(ch)) {
@@ -2432,15 +2445,20 @@ public class Xpp3Parser
                 //ch = more();
 
                 if(ch == '?') {
+                    if (!seenPITarget) {
+                        throw new XmlPullParserException("processing instruction PITarget name not found", this, null);
+                    }
                     seenQ = true;
                 } else if(ch == '>') {
                     if(seenQ) {
                         break;  // found end sequence!!!!
                     }
-                    seenQ = false;
+                    if (!seenPITarget) {
+                        throw new XmlPullParserException("processing instruction PITarget name not found", this, null);
+                    }
                 } else {
                     if(piTargetEnd == -1 && isS(ch)) {
-                        piTargetEnd = pos - 1 + bufAbsoluteStart;
+                        piTargetEnd = pos - 1;
 
                         // [17] PITarget ::= Name - (('X' | 'x') ('M' | 'm') ('L' | 'l'))
                         if((piTargetEnd - piTargetStart) == 3) {
@@ -2451,7 +2469,7 @@ public class Xpp3Parser
                             {
                                 if(piTargetStart > 3) {  //<?xml is allowed as first characters in input ...
                                     throw new XmlPullParserException(
-                                        "processing instruction can not have PITarget with reserveld xml name",
+                                        "processing instruction can not have PITarget with reserved xml name",
                                         this, null);
                                 } else {
                                     if(buf[piTargetStart] != 'x'
@@ -2465,7 +2483,7 @@ public class Xpp3Parser
                                 }
                                 parseXmlDecl(ch);
                                 if(tokenize) posEnd = pos - 2;
-                                final int off = piTargetStart - bufAbsoluteStart + 3;
+                                final int off = piTargetStart + 3;
                                 final int len = pos - 2 - off;
                                 xmlDeclContent = newString(buf, off, len);
                                 return false;
@@ -2506,6 +2524,7 @@ public class Xpp3Parser
                         normalizedCR = false;
                     }
                 }
+                seenPITarget = true;
                 ch = more();
             }
         } catch(EOFException ex) {
@@ -2520,8 +2539,6 @@ public class Xpp3Parser
             //throw new XmlPullParserException(
             //    "processing instruction must have PITarget name", this, null);
         }
-        piTargetStart -= bufAbsoluteStart;
-        piTargetEnd -= bufAbsoluteStart;
         if(tokenize) {
             posEnd = pos - 2;
             if(normalizeIgnorableWS) {
@@ -2590,7 +2607,7 @@ public class Xpp3Parser
         }
         final int versionEnd = pos - 1;
         parseXmlDeclWithVersion(versionStart, versionEnd);
-        preventBufferCompaction = false; // alow again buffer commpaction - pos MAY chnage
+        preventBufferCompaction = false; // allow again buffer compaction - pos MAY change
     }
     //protected String xmlDeclVersion;
 
@@ -2682,11 +2699,11 @@ public class Xpp3Parser
             if(ch == 'y') {
                 ch = requireInput(ch, YES);
                 //Boolean standalone = new Boolean(true);
-                xmlDeclStandalone = new Boolean(true);
+                xmlDeclStandalone = Boolean.TRUE;
             } else if(ch == 'n') {
                 ch = requireInput(ch, NO);
                 //Boolean standalone = new Boolean(false);
-                xmlDeclStandalone = new Boolean(false);
+                xmlDeclStandalone = Boolean.FALSE;
             } else {
                 throw new XmlPullParserException(
                     "expected 'yes' or 'no' after standalone and not "
@@ -2716,7 +2733,7 @@ public class Xpp3Parser
 
 // NOTE: this code is broken as for some types of input streams (URLConnection ...)
 // it is not possible to do more than once new InputStreamReader(inputStream)
-// as it somehow detects it and closes undelrying inout stram (b.....d!)
+// as it somehow detects it and closes underlying input stream (b.....d!)
 // In future one will need better low level byte-by-byte reading of prolog and then doing InputStream ...
 // for more details see http://www.extreme.indiana.edu/bugzilla/show_bug.cgi?id=135
         //        //reset input stream
@@ -2761,7 +2778,7 @@ public class Xpp3Parser
         // [28]  doctypedecl ::= '<!DOCTYPE' S Name (S ExternalID)? S? ('['
         //                      (markupdecl | DeclSep)* ']' S?)? '>'
         int bracketLevel = 0;
-        final boolean normalizeIgnorableWS = tokenize == true && roundtripSupported == false;
+        final boolean normalizeIgnorableWS = tokenize && !roundtripSupported;
         boolean normalizedCR = false;
         while(true) {
             ch = more();
@@ -2773,7 +2790,7 @@ public class Xpp3Parser
                     normalizedCR = true;
                     //posEnd = pos -1;
                     //joinPC();
-                    // posEnd is alreadys set
+                    // posEnd is already set
                     if(!usePC) {
                         posEnd = pos -1;
                         if(posEnd > posStart) {
@@ -2839,7 +2856,7 @@ public class Xpp3Parser
         final int cdStart = pos + bufAbsoluteStart;
         final int curLine = lineNumber;
         final int curColumn = columnNumber;
-        final boolean normalizeInput = tokenize == false || roundtripSupported == false;
+        final boolean normalizeInput = !tokenize || !roundtripSupported;
         try {
             if(normalizeInput) {
                 if(hadCharData) {
@@ -2884,7 +2901,7 @@ public class Xpp3Parser
                     if(ch == '\r') {
                         normalizedCR = true;
                         posStart = cdStart - bufAbsoluteStart;
-                        posEnd = pos - 1; // posEnd is alreadys set
+                        posEnd = pos - 1; // posEnd is already set
                         if(!usePC) {
                             if(posEnd > posStart) {
                                 joinPC();
@@ -2934,21 +2951,8 @@ public class Xpp3Parser
         if(bufEnd > bufSoftLimit) {
 
             // expand buffer it makes sense!!!!
-            boolean compact = bufStart > bufSoftLimit;
-            boolean expand = false;
-            if(preventBufferCompaction) {
-                compact = false;
-                expand = true;
-            } else if(!compact) {
-                //freeSpace
-                if(bufStart < buf.length / 2) {
-                    // less then half buffer available forcompactin --> expand instead!!!
-                    expand = true;
-                } else {
-                    // at least half of buffer can be reclaimed --> worthwhile effort!!!
-                    compact = true;
-                }
-            }
+            // check if we need to compact or expand the buffer
+            boolean compact = !preventBufferCompaction && (bufStart > bufSoftLimit || bufStart >= buf.length / 2);
 
             // if buffer almost full then compact it
             if(compact) {
@@ -2959,22 +2963,20 @@ public class Xpp3Parser
                         "TRACE_SIZING fillBuf() compacting "+bufStart
                             +" bufEnd="+bufEnd
                             +" pos="+pos+" posStart="+posStart+" posEnd="+posEnd
-                            +" buf first 100 chars:"+new String(buf, bufStart,
-                                                                bufEnd - bufStart < 100 ? bufEnd - bufStart : 100 ));
+                            +" buf first 100 chars:"
+                            + new String(buf, 0, Math.min(bufEnd, 100)));;
 
-            } else if(expand) {
+            } else {
                 final int newSize = 2 * buf.length;
                 final char newBuf[] = new char[ newSize ];
                 if(TRACE_SIZING) System.out.println("TRACE_SIZING fillBuf() "+buf.length+" => "+newSize);
                 System.arraycopy(buf, bufStart, newBuf, 0, bufEnd - bufStart);
                 buf = newBuf;
                 if(bufLoadFactor > 0) {
-                    //bufSoftLimit = ( bufLoadFactor * buf.length ) /100;
-                    bufSoftLimit = (int) (( ((long) bufLoadFactor) * buf.length ) /100);
+                    // Include a fix for
+                    // https://web.archive.org/web/20070831191548/http://www.extreme.indiana.edu/bugzilla/show_bug.cgi?id=228
+                    bufSoftLimit = (int)(bufferLoadFactor * buf.length);
                 }
-
-            } else {
-                throw new XmlPullParserException("internal error in fillBuffer()");
             }
             bufEnd -= bufStart;
             pos -= bufStart;
@@ -2985,16 +2987,16 @@ public class Xpp3Parser
             if(TRACE_SIZING) System.out.println(
                     "TRACE_SIZING fillBuf() after bufEnd="+bufEnd
                         +" pos="+pos+" posStart="+posStart+" posEnd="+posEnd
-                        +" buf first 100 chars:"+new String(buf, 0, bufEnd < 100 ? bufEnd : 100));
+                        +" buf first 100 chars:"+new String(buf, 0, Math.min(bufEnd, 100)));
         }
         // at least one character must be read or error
-        final int len = buf.length - bufEnd > READ_CHUNK_SIZE ? READ_CHUNK_SIZE : buf.length - bufEnd;
+        final int len = Math.min(buf.length - bufEnd, READ_CHUNK_SIZE);
         final int ret = reader.read(buf, bufEnd, len);
         if(ret > 0) {
             bufEnd += ret;
             if(TRACE_SIZING) System.out.println(
                     "TRACE_SIZING fillBuf() after filling in buffer"
-                        +" buf first 100 chars:"+new String(buf, 0, bufEnd < 100 ? bufEnd : 100));
+                        +" buf first 100 chars:"+new String(buf, 0, Math.min(bufEnd, 100)));
 
             return;
         }
@@ -3006,31 +3008,50 @@ public class Xpp3Parser
                     reachedEnd = true;
                     return;
                 } else {
-                    StringBuffer expectedTagStack = new StringBuffer();
+                    StringBuilder expectedTagStack = new StringBuilder();
                     if(depth > 0) {
-                        //final char[] cbuf = elRawName[depth];
-                        //final String startname = new String(cbuf, 0, elRawNameEnd[depth]);
-                        expectedTagStack.append(" - expected end tag");
-                        if(depth > 1) {
-                            expectedTagStack.append("s"); //more than one end tag
-                        }
-                        expectedTagStack.append(" ");
-                        for (int i = depth; i > 0; i--)
-                        {
-                            String tagName = new String(elRawName[i], 0, elRawNameEnd[i]);
-                            expectedTagStack.append("</").append(tagName).append('>');
-                        }
-                        expectedTagStack.append(" to close");
-                        for (int i = depth; i > 0; i--)
-                        {
-                            if(i != depth) {
-                                expectedTagStack.append(" and"); //more than one end tag
+                        if (elRawName == null || elRawName[depth] == null) {
+                            String tagName = new String(buf, posStart + 1, pos - posStart - 1);
+                            expectedTagStack.append(" - expected the opening tag <").append(tagName).append("...>");
+                        } else {
+                            //final char[] cbuf = elRawName[depth];
+                            //final String startname = new String(cbuf, 0, elRawNameEnd[depth]);
+                            expectedTagStack.append(" - expected end tag");
+                            if(depth > 1) {
+                                expectedTagStack.append("s"); //more than one end tag
                             }
-                            String tagName = new String(elRawName[i], 0, elRawNameEnd[i]);
-                            expectedTagStack.append(" start tag <"+tagName+">");
-                            expectedTagStack.append(" from line "+elRawNameLine[i]);
+                            expectedTagStack.append(" ");
+                            for (int i = depth; i > 0; i--)
+                            {
+                                if (elRawName == null || elRawName[i] == null) {
+                                    String tagName = new String(buf, posStart + 1, pos - posStart - 1);
+                                    expectedTagStack
+                                        .append(" - expected the opening tag <")
+                                        .append(tagName)
+                                        .append("...>");
+                                } else {
+                                    String tagName = new String(elRawName[i], 0, elRawNameEnd[i]);
+                                    expectedTagStack.append("</").append(tagName).append('>');
+                                }
+                            }
+                            expectedTagStack.append(" to close");
+                            for (int i = depth; i > 0; i--)
+                            {
+                                if(i != depth) {
+                                    expectedTagStack.append(" and"); //more than one end tag
+                                }
+                                if (elRawName == null || elRawName[i] == null) {
+                                    String tagName = new String(elRawName[i], 0, elRawNameEnd[i]);
+                                    expectedTagStack.append(" start tag <"+tagName+">");
+                                    expectedTagStack.append(" from line "+elRawNameLine[i]);
+                                } else {
+                                    String tagName = new String(elRawName[i], 0, elRawNameEnd[i]);
+                                    expectedTagStack.append(" start tag <").append(tagName).append(">");
+                                    expectedTagStack.append(" from line ").append(elRawNameLine[i]);
+                                }
+                            }
+                            expectedTagStack.append(", parser stopped on");
                         }
-                        expectedTagStack.append(", parser stopped on");
                     }
                     throw new EOFException("no more data available"
                                                +expectedTagStack.toString()+getPositionDescription());
@@ -3044,7 +3065,7 @@ public class Xpp3Parser
     protected char more() throws IOException, XmlPullParserException {
         if(pos >= bufEnd) {
             fillBuf();
-            // this return value should be ignonored as it is used in epilog parsing ...
+            // this return value should be ignored as it is used in epilog parsing ...
             if(reachedEnd) return (char)-1;
         }
         final char ch = buf[pos++];
@@ -3091,11 +3112,11 @@ public class Xpp3Parser
     protected char requireInput(char ch, char[] input)
         throws XmlPullParserException, IOException
     {
-        for (int i = 0; i < input.length; i++)
+        for (char anInput : input)
         {
-            if(ch != input[i]) {
+            if(ch != anInput) {
                 throw new XmlPullParserException(
-                    "expected "+printable(input[i])+" in "+new String(input)
+                    "expected "+printable(anInput)+" in "+new String(input)
                         +" and not "+printable(ch), this, null);
             }
             ch = more();
@@ -3154,11 +3175,9 @@ public class Xpp3Parser
 
     //private final static boolean isNameStartChar(char ch) {
     protected boolean isNameStartChar(char ch) {
-        return (ch < LOOKUP_MAX_CHAR && lookupNameStartChar[ ch ])
-            || (ch >= LOOKUP_MAX_CHAR && ch <= '\u2027')
-            || (ch >= '\u202A' &&  ch <= '\u218F')
-            || (ch >= '\u2800' &&  ch <= '\uFFEF')
-            ;
+        return ch < LOOKUP_MAX_CHAR
+                ? lookupNameStartChar[ch]
+                : (ch <= '\u2027') || (ch >= '\u202A' && ch <= '\u218F') || (ch >= '\u2800' && ch <= '\uFFEF');
 
         //      if(ch < LOOKUP_MAX_CHAR) return lookupNameStartChar[ ch ];
         //      else return ch <= '\u2027'
@@ -3173,7 +3192,7 @@ public class Xpp3Parser
         //        //[#x202A-#x218F]
         //        if(ch < '\u202A') return false;
         //        if(ch <= '\u218F') return true;
-        //        // added pairts [#x2800-#xD7FF] | [#xE000-#xFDCF] | [#xFDE0-#xFFEF] | [#x10000-#x10FFFF]
+        //        // added parts [#x2800-#xD7FF] | [#xE000-#xFDCF] | [#xFDE0-#xFFEF] | [#x10000-#x10FFFF]
         //        if(ch < '\u2800') return false;
         //        if(ch <= '\uFFEF') return true;
         //        return false;
@@ -3188,11 +3207,9 @@ public class Xpp3Parser
 
         //        if(ch < LOOKUP_MAX_CHAR) return (lookupNameChar[ (int)ch / 32 ] & (1 << (ch % 32))) != 0;
 
-        return (ch < LOOKUP_MAX_CHAR && lookupNameChar[ ch ])
-            || (ch >= LOOKUP_MAX_CHAR && ch <= '\u2027')
-            || (ch >= '\u202A' &&  ch <= '\u218F')
-            || (ch >= '\u2800' &&  ch <= '\uFFEF')
-            ;
+        return ch < LOOKUP_MAX_CHAR
+                ? lookupNameChar[ch]
+                : (ch <= '\u2027') || (ch >= '\u202A' && ch <= '\u218F') || (ch >= '\u2800' && ch <= '\uFFEF');
         //return false;
         //        return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || ch == ':'
         //          || (ch >= '0' && ch <= '9');
@@ -3203,7 +3220,7 @@ public class Xpp3Parser
         //        //[#x202A-#x218F]
         //        else if(ch < '\u202A') return false;
         //        else if(ch <= '\u218F') return true;
-        //        // added pairts [#x2800-#xD7FF] | [#xE000-#xFDCF] | [#xFDE0-#xFFEF] | [#x10000-#x10FFFF]
+        //        // added parts [#x2800-#xD7FF] | [#xE000-#xFDCF] | [#xFDE0-#xFFEF] | [#x10000-#x10FFFF]
         //        else if(ch < '\u2800') return false;
         //        else if(ch <= '\uFFEF') return true;
         //else return false;
@@ -3229,7 +3246,7 @@ public class Xpp3Parser
         } else if(ch == '\'') {
             return "\\'";
         } if(ch > 127 || ch < 32) {
-            return "\\u"+Integer.toHexString((int)ch);
+            return "\\u"+Integer.toHexString(ch);
         }
         return ""+ch;
     }
@@ -3237,7 +3254,7 @@ public class Xpp3Parser
     protected String printable(String s) {
         if(s == null) return null;
         final int sLen = s.length();
-        StringBuffer buf = new StringBuffer(sLen + 10);
+        StringBuilder buf = new StringBuilder(sLen + 10);
         for(int i = 0; i < sLen; ++i) {
             buf.append(printable(s.charAt(i)));
         }
