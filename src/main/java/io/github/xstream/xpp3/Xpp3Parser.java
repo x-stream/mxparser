@@ -7,7 +7,7 @@
  * $Id: MXParser.java,v 1.52 2006/11/09 18:29:37 aslom Exp $
  */
 
-package org.xmlpull.mxp1;
+package io.github.xstream.xpp3;
 
 import java.io.EOFException;
 import java.io.IOException;
@@ -31,7 +31,7 @@ import org.xmlpull.v1.XmlPullParserException;
  * @author <a href="http://www.extreme.indiana.edu/~aslom/">Aleksander Slominski</a>
  */
 
-public class MXParser
+public class Xpp3Parser
     implements XmlPullParser
 {
     //NOTE: no interning of those strings --> by Java lang spec they MUST be already interned
@@ -421,7 +421,7 @@ public class MXParser
         resetStringCache();
     }
 
-    public MXParser() {
+    public Xpp3Parser() {
     }
 
 
