@@ -543,9 +543,9 @@
   </distributionManagement>
 
   <scm>
-    <url>http://github.com/x-stream/xpp3parser</url>
-    <developerConnection>scm:git:https://github.com/x-stream/xpp3parser.git</developerConnection>
-    <connection>scm:git:https://github.com/x-stream/xpp3parser.git</connection>
+    <url>https://github.com/x-stream/xpp3parser</url>
+    <developerConnection>scm:git:ssh://git@github.com/x-stream/xpp3parser.git</developerConnection>
+    <connection>scm:git:ssh://git@github.com/x-stream/xpp3parser.git</connection>
     <tag>HEAD</tag>
   </scm>
   
