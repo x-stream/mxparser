@@ -236,7 +236,7 @@
           <version>${version.plugin.maven.release}</version>
           <configuration>
             <mavenExecutorId>forked-path</mavenExecutorId>
-            <goals>deploy site-deploy</goals>
+            <goals>deploy site</goals>
             <autoVersionSubmodules>true</autoVersionSubmodules>
             <useReleaseProfile>false</useReleaseProfile>
             <arguments>-Pxpp3parser-release</arguments>
@@ -309,18 +309,6 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-report-plugin</artifactId>
           <version>${version.plugin.maven.surefire}</version>
-        </plugin>
-        <plugin>
-          <groupId>com.github.github</groupId>
-          <artifactId>site-maven-plugin</artifactId>
-          <version>${version.plugin.github.site}</version>
-          <configuration>
-            <server>github</server>
-            <goals>deploy</goals>
-            <autoVersionSubmodules>true</autoVersionSubmodules>
-            <useReleaseProfile>false</useReleaseProfile>
-            <arguments>-Pxpp3parser-release</arguments>
-          </configuration>
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
@@ -439,19 +427,6 @@
           </execution>
         </executions>
       </plugin>
-      <plugin>
-        <groupId>com.github.github</groupId>
-        <artifactId>site-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>deploy-gh-pages</id>
-            <phase>site-deploy</phase>
-            <goals>
-              <goal>site</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
     </plugins>
   </build>
 
@@ -561,12 +536,10 @@
       <id>ossrh-snapshots</id>
       <url>https://oss.sonatype.org/content/repositories/snapshots</url>
     </snapshotRepository>
-    <!--
     <site>
       <id>github</id>
-      <url>scm:git:ssh://git@github.com/x-stream/x-stream.github.io.git</url>
+      <url>file:docs</url>
     </site>
-    -->
   </distributionManagement>
 
   <scm>
@@ -583,7 +556,6 @@
     <version.java.target>1.5</version.java.target>
 
     <version.plugin.felix.bundle>2.3.7</version.plugin.felix.bundle>
-    <version.plugin.github.site>0.9</version.plugin.github.site>
     <version.plugin.maven.antrun>3.0.0</version.plugin.maven.antrun>
     <version.plugin.maven.changes>2.12.1</version.plugin.maven.changes>
     <version.plugin.maven.clean>3.1.0</version.plugin.maven.clean>
