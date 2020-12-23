@@ -249,8 +249,23 @@
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-scm-publish-plugin</artifactId>
+          <version>${version.plugin.maven.scm-publish}</version>
+          <configuration>
+            <checkinComment>Update site docs for version ${project.version}.</checkinComment>
+            <content>${project.build.directory}/site</content>
+            <localCheckout>true</localCheckout>
+            <scmBranch>gh-pages</scmBranch>
+            <serverId>github</serverId>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-site-plugin</artifactId>
           <version>${version.plugin.maven.site}</version>
+          <configuration>
+            <skipDeploy>true</skipDeploy>
+          </configuration>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -384,6 +399,19 @@
                 <copy file="LICENSE.txt" tofile="${project.build.directory}/generated-resources/META-INF/LICENSE" overwrite="false" failonerror="true" />
               </target>
             </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-scm-publish-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>push-site</id>
+            <phase>site-deploy</phase>
+            <goals>
+              <goal>publish-scm</goal>
+            </goals>
           </execution>
         </executions>
       </plugin>
@@ -538,7 +566,7 @@
     </snapshotRepository>
     <site>
       <id>github</id>
-      <url>file:docs</url>
+      <url>scm:git:ssh://git@github.com/x-stream/xpp3parser.git</url>
     </site>
   </distributionManagement>
 
@@ -569,6 +597,7 @@
     <version.plugin.maven.project-info-reports>3.1.0</version.plugin.maven.project-info-reports>
     <version.plugin.maven.release>2.5.3</version.plugin.maven.release>
     <version.plugin.maven.resources>3.2.0</version.plugin.maven.resources>
+    <version.plugin.maven.scm-publish>3.0.0</version.plugin.maven.scm-publish>
     <version.plugin.maven.site>3.9.1</version.plugin.maven.site>
     <version.plugin.maven.source>3.2.1</version.plugin.maven.source>
     <version.plugin.maven.surefire>3.0.0-M5</version.plugin.maven.surefire>
