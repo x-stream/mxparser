@@ -2455,6 +2455,10 @@ public class Xpp3Parser
                     }
                     if (!seenPITarget) {
                         throw new XmlPullParserException("processing instruction PITarget name not found", this, null);
+                    } else {
+                        // seenPITarget && !seenQ
+                        throw new XmlPullParserException( "processing instruction started on line " + curLine
+                            + " and column " + curColumn + " was not closed", this, null );
                     }
                 } else {
                     if(piTargetEnd == -1 && isS(ch)) {
