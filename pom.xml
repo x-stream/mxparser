@@ -185,6 +185,7 @@
               <manifestEntries>
                 <Specification-Version>${project.info.majorVersion}.${project.info.minorVersion}</Specification-Version>
                 <Bundle-License>Indiana University Extreme! Lab Software License</Bundle-License>
+                <Automatic-Module-Name>io.github.xstream.xpp3</Automatic-Module-Name>
                 <X-Compile-Source>${version.java.source}</X-Compile-Source>
                 <X-Compile-Target>${version.java.target}</X-Compile-Target>
                 <X-Builder>Maven ${maven.version}</X-Builder>
