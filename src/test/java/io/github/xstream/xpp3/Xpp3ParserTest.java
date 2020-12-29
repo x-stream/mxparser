@@ -271,7 +271,7 @@ public class Xpp3ParserTest
         assertEquals( XmlPullParser.END_TAG, parser.nextToken() );
     }
 
-    @Ignore // unsupported edge case for now
+    @Test
     public void testProcessingInstructionsContainingXml()
         throws Exception
     {
@@ -293,6 +293,37 @@ public class Xpp3ParserTest
         assertEquals( XmlPullParser.PROCESSING_INSTRUCTION, parser.nextToken() );
         assertEquals( XmlPullParser.TEXT, parser.nextToken() ); // whitespace
         assertEquals( XmlPullParser.END_TAG, parser.nextToken() );
+    }
+
+    @Test
+    public void testMalformedProcessingInstructionsContainingXmlNoClosingQuestionMark()
+        throws Exception
+    {
+        StringBuffer sb = new StringBuffer();
+        sb.append( "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" );
+        sb.append( "<project />\n" );
+        sb.append( "<?pi\n" );
+        sb.append( "   <tag>\n" );
+        sb.append( "   </tag>>\n" );
+
+        Xpp3Parser parser = new Xpp3Parser();
+        parser.setInput( new StringReader( sb.toString() ) );
+
+        try
+        {
+            assertEquals( XmlPullParser.PROCESSING_INSTRUCTION, parser.nextToken() );
+            assertEquals( XmlPullParser.IGNORABLE_WHITESPACE, parser.nextToken() );
+            assertEquals( XmlPullParser.START_TAG, parser.nextToken() );
+            assertEquals( XmlPullParser.END_TAG, parser.nextToken() );
+            assertEquals( XmlPullParser.IGNORABLE_WHITESPACE, parser.nextToken() );
+            assertEquals( XmlPullParser.PROCESSING_INSTRUCTION, parser.nextToken() );
+
+            fail( "Should fail since it has invalid PI" );
+        }
+        catch ( XmlPullParserException ex )
+        {
+            assertTrue( ex.getMessage().contains( "processing instruction started on line 3 and column 2 was not closed" ) );
+        }
     }
 
     @Test

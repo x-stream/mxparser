@@ -2433,6 +2433,7 @@ public class Xpp3Parser
 
         try {
             boolean seenPITarget = false;
+            boolean seenInnerTag = false;
             boolean seenQ = false;
             char ch = more();
             if(isS(ch)) {
@@ -2450,16 +2451,19 @@ public class Xpp3Parser
                     }
                     seenQ = true;
                 } else if(ch == '>') {
-                    if(seenQ) {
+                    if (seenQ) {
                         break;  // found end sequence!!!!
                     }
                     if (!seenPITarget) {
                         throw new XmlPullParserException("processing instruction PITarget name not found", this, null);
-                    } else {
+                    } else if (!seenInnerTag){
                         // seenPITarget && !seenQ
                         throw new XmlPullParserException( "processing instruction started on line " + curLine
                             + " and column " + curColumn + " was not closed", this, null );
-                    }
+                    } else
+                        seenInnerTag = false;
+                } else if (ch == '<') {
+                    seenInnerTag = true;
                 } else {
                     if(piTargetEnd == -1 && isS(ch)) {
                         piTargetEnd = pos - 1;
@@ -3074,7 +3078,7 @@ public class Xpp3Parser
         }
         final char ch = buf[pos++];
         //line/columnNumber
-        if(ch == '\n') { ++lineNumber; columnNumber = 1; }
+        if(ch == '\n') { ++lineNumber; columnNumber = 0; }
         else { ++columnNumber; }
         //System.out.print(ch);
         return ch;
