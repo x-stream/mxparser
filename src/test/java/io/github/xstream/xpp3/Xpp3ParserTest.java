@@ -336,7 +336,7 @@ public class Xpp3ParserTest
         }
         catch ( XmlPullParserException ex )
         {
-            assertTrue( ex.getMessage().contains( "processing instruction started on line 3 and column 2 was not closed" ) );
+            assertTrue( ex.getMessage().contains( "processing instruction started on line 3 and column 3 was not closed" ) );
         }
     }
 
@@ -517,7 +517,7 @@ public class Xpp3ParserTest
         }
         catch ( XmlPullParserException ex )
         {
-            assertTrue( ex.getMessage().contains( "processing instruction started on line 1 and column 2 was not closed" ) );
+            assertTrue( ex.getMessage().contains( "processing instruction started on line 1 and column 3 was not closed" ) );
         }
     }
 
@@ -542,7 +542,7 @@ public class Xpp3ParserTest
         }
         catch ( XmlPullParserException ex )
         {
-            assertTrue( ex.getMessage().contains( "processing instruction started on line 1 and column 13 was not closed" ) );
+            assertTrue( ex.getMessage().contains( "processing instruction started on line 1 and column 14 was not closed" ) );
         }
     }
 

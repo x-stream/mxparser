@@ -379,7 +379,7 @@ public class Xpp3Parser
         //System.out.println("reset() called");
         location = null;
         lineNumber = 1;
-        columnNumber = 0;
+        columnNumber = 1;
         seenRoot = false;
         reachedEnd = false;
         eventType = START_DOCUMENT;
@@ -3078,7 +3078,7 @@ public class Xpp3Parser
         }
         final char ch = buf[pos++];
         //line/columnNumber
-        if(ch == '\n') { ++lineNumber; columnNumber = 0; }
+        if(ch == '\n') { ++lineNumber; columnNumber = 1; }
         else { ++columnNumber; }
         //System.out.print(ch);
         return ch;
