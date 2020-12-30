@@ -1325,7 +1325,7 @@ public class Xpp3Parser
                     }
 
 
-                    //no MARKUP not ENTITIES so work on character data ...
+                    //no MARKUP nor ENTITIES so work on character data ...
 
 
 
@@ -1393,7 +1393,7 @@ public class Xpp3Parser
                         ch = more();
                     } while(ch != '<' && ch != '&');
                     posEnd = pos - 1;
-                    continue MAIN_LOOP;  // skip ch = more() from below - we are alreayd ahead ...
+                    continue MAIN_LOOP;  // skip ch = more() from below - we are already ahead ...
                 }
                 ch = more();
             } // endless while(true)
