@@ -257,6 +257,20 @@ public class Xpp3ParserTest
     }
 
     @Test
+    public void testValidCDATA()
+        throws Exception
+    {
+        Xpp3Parser parser = new Xpp3Parser();
+        String input = "<root><![CDATA[x]],if(c[a]>3&&a.v)]]></root>";
+        parser.setInput( new StringReader( input ) );
+
+        assertEquals( XmlPullParser.START_TAG, parser.nextToken() );
+        assertEquals( XmlPullParser.CDSECT, parser.nextToken() );
+        assertEquals( "x]],if(c[a]>3&&a.v)", parser.getText() );
+        assertEquals( XmlPullParser.END_TAG, parser.nextToken() );
+    }
+
+    @Test
     public void testProcessingInstruction()
         throws Exception
     {

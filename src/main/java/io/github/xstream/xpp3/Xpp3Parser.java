@@ -2901,7 +2901,7 @@ public class Xpp3Parser
                     seenBracket = false;
                 } else {
                     if(seenBracket) {
-                        seenBracket = false;
+                        seenBracketBracket = seenBracket = false;
                     }
                 }
                 if(normalizeInput) {
