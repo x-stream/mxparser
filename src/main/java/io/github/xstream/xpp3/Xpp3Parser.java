@@ -33,20 +33,20 @@ public class Xpp3Parser
     implements XmlPullParser
 {
     //NOTE: no interning of those strings --> by Java lang spec they MUST be already interned
-    protected final static String XML_URI = "http://www.w3.org/XML/1998/namespace";
-    protected final static String XMLNS_URI = "http://www.w3.org/2000/xmlns/";
-    protected final static String FEATURE_XML_ROUNDTRIP=
+    private final static String XML_URI = "http://www.w3.org/XML/1998/namespace";
+    private final static String XMLNS_URI = "http://www.w3.org/2000/xmlns/";
+    private final static String FEATURE_XML_ROUNDTRIP=
         //"http://xmlpull.org/v1/doc/features.html#xml-roundtrip";
         "http://xmlpull.org/v1/doc/features.html#xml-roundtrip";
-    protected final static String FEATURE_NAMES_INTERNED =
+    private final static String FEATURE_NAMES_INTERNED =
         "http://xmlpull.org/v1/doc/features.html#names-interned";
-    protected final static String PROPERTY_XMLDECL_VERSION =
+    private final static String PROPERTY_XMLDECL_VERSION =
         "http://xmlpull.org/v1/doc/properties.html#xmldecl-version";
-    protected final static String PROPERTY_XMLDECL_STANDALONE =
+    private final static String PROPERTY_XMLDECL_STANDALONE =
         "http://xmlpull.org/v1/doc/properties.html#xmldecl-standalone";
-    protected final static String PROPERTY_XMLDECL_CONTENT =
+    private final static String PROPERTY_XMLDECL_CONTENT =
         "http://xmlpull.org/v1/doc/properties.html#xmldecl-content";
-    protected final static String PROPERTY_LOCATION =
+    private final static String PROPERTY_LOCATION =
         "http://xmlpull.org/v1/doc/properties.html#location";
 
     /**
@@ -56,45 +56,45 @@ public class Xpp3Parser
      * and newString MAY return interned String depending on this variable.
      * <p><b>NOTE:</b> by default in this minimal implementation it is false!
      */
-    protected boolean allStringsInterned;
+    private boolean allStringsInterned;
 
-    protected void resetStringCache() {
+    private void resetStringCache() {
         //System.out.println("resetStringCache() minimum called");
     }
 
-    protected String newString(char[] cbuf, int off, int len) {
+    private String newString(char[] cbuf, int off, int len) {
         return new String(cbuf, off, len);
     }
 
-    protected String newStringIntern(char[] cbuf, int off, int len) {
+    private String newStringIntern(char[] cbuf, int off, int len) {
         return (new String(cbuf, off, len)).intern();
     }
 
     private static final boolean TRACE_SIZING = false;
 
     // NOTE: features are not resettable and typically defaults to false ...
-    protected boolean processNamespaces;
-    protected boolean roundtripSupported;
+    private boolean processNamespaces;
+    private boolean roundtripSupported;
 
     // global parser state
-    protected String location;
-    protected int lineNumber;
-    protected int columnNumber;
-    protected boolean seenRoot;
-    protected boolean reachedEnd;
-    protected int eventType;
-    protected boolean emptyElementTag;
+    private String location;
+    private int lineNumber;
+    private int columnNumber;
+    private boolean seenRoot;
+    private boolean reachedEnd;
+    private int eventType;
+    private boolean emptyElementTag;
     // element stack
-    protected int depth;
-    protected char[] elRawName[];
-    protected int elRawNameEnd[];
-    protected int elRawNameLine[];
+    private int depth;
+    private char[] elRawName[];
+    private int elRawNameEnd[];
+    private int elRawNameLine[];
 
-    protected String elName[];
-    protected String elPrefix[];
-    protected String elUri[];
-    //protected String elValue[];
-    protected int elNamespaceCount[];
+    private String elName[];
+    private String elPrefix[];
+    private String elUri[];
+    //private String elValue[];
+    private int elNamespaceCount[];
 
 
 
@@ -102,7 +102,7 @@ public class Xpp3Parser
      * Make sure that we have enough space to keep element stack if passed size.
      * It will always create one additional slot then current depth
      */
-    protected void ensureElementsCapacity() {
+    private void ensureElementsCapacity() {
         final int elStackSize = elName != null ? elName.length : 0;
         if( (depth + 1) >= elStackSize) {
             // we add at least one extra slot ...
@@ -170,22 +170,22 @@ public class Xpp3Parser
 
 
     // attribute stack
-    protected int attributeCount;
-    protected String attributeName[];
-    protected int attributeNameHash[];
-    //protected int attributeNameStart[];
-    //protected int attributeNameEnd[];
-    protected String attributePrefix[];
-    protected String attributeUri[];
-    protected String attributeValue[];
-    //protected int attributeValueStart[];
-    //protected int attributeValueEnd[];
+    private int attributeCount;
+    private String attributeName[];
+    private int attributeNameHash[];
+    //private int attributeNameStart[];
+    //private int attributeNameEnd[];
+    private String attributePrefix[];
+    private String attributeUri[];
+    private String attributeValue[];
+    //private int attributeValueStart[];
+    //private int attributeValueEnd[];
 
 
     /**
      * Make sure that in attributes temporary array is enough space.
      */
-    protected  void ensureAttributesCapacity(int size) {
+    private  void ensureAttributesCapacity(int size) {
         final int attrPosSize = attributeName != null ? attributeName.length : 0;
         if(size >= attrPosSize) {
             final int newSize = size > 7 ? 2 * size : 8; // = lucky 7 + 1 //25
@@ -223,12 +223,12 @@ public class Xpp3Parser
     }
 
     // namespace stack
-    protected int namespaceEnd;
-    protected String namespacePrefix[];
-    protected int namespacePrefixHash[];
-    protected String namespaceUri[];
+    private int namespaceEnd;
+    private String namespacePrefix[];
+    private int namespacePrefixHash[];
+    private String namespaceUri[];
 
-    protected void ensureNamespacesCapacity(int size) {
+    private void ensureNamespacesCapacity(int size) {
         final int namespaceSize = namespacePrefix != null ? namespacePrefix.length : 0;
         if(size >= namespaceSize) {
             final int newSize = size > 7 ? 2 * size : 8; // = lucky 7 + 1 //25
@@ -265,7 +265,7 @@ public class Xpp3Parser
      * time to compute - so it also means diminishing hash quality for long strings
      * but for XML parsing it should be good enough ...
      */
-    protected static final int fastHash( char ch[], int off, int len ) {
+    private static final int fastHash( char ch[], int off, int len ) {
         if(len == 0) return 0;
         //assert len >0
         int hash = ch[off]; // hash at beginning
@@ -284,16 +284,16 @@ public class Xpp3Parser
     }
 
     // entity replacement stack
-    protected int entityEnd;
+    private int entityEnd;
 
-    protected String entityName[];
-    protected char[] entityNameBuf[];
-    protected String entityReplacement[];
-    protected char[] entityReplacementBuf[];
+    private String entityName[];
+    private char[] entityNameBuf[];
+    private String entityReplacement[];
+    private char[] entityReplacementBuf[];
 
-    protected int entityNameHash[];
+    private int entityNameHash[];
 
-    protected void ensureEntityCapacity() {
+    private void ensureEntityCapacity() {
         final int entitySize = entityReplacementBuf != null ? entityReplacementBuf.length : 0;
         if(entityEnd >= entitySize) {
             final int newSize = entityEnd > 7 ? 2 * entityEnd : 8; // = lucky 7 + 1 //25
@@ -326,56 +326,56 @@ public class Xpp3Parser
     }
 
     // input buffer management
-    protected static final int READ_CHUNK_SIZE = 8*1024; //max data chars in one read() call
-    protected Reader reader;
-    protected String inputEncoding;
+    private static final int READ_CHUNK_SIZE = 8*1024; //max data chars in one read() call
+    private Reader reader;
+    private String inputEncoding;
 
 
-    protected int bufLoadFactor = 95;  // 99%
-    //protected int bufHardLimit;  // only matters when expanding
+    private int bufLoadFactor = 95;  // 99%
+    //private int bufHardLimit;  // only matters when expanding
     private float bufferLoadFactor = bufLoadFactor / 100f;
 
-    protected char buf[] = new char[
+    private char buf[] = new char[
         Runtime.getRuntime().freeMemory() > 1000000L ? READ_CHUNK_SIZE : 256 ];
-    protected int bufSoftLimit = (int)( bufferLoadFactor * buf.length ) /100; // desirable size of buffer
-    protected boolean preventBufferCompaction;
+    private int bufSoftLimit = (int)( bufferLoadFactor * buf.length ) /100; // desirable size of buffer
+    private boolean preventBufferCompaction;
 
-    protected int bufAbsoluteStart; // this is buf
-    protected int bufStart;
-    protected int bufEnd;
-    protected int pos;
-    protected int posStart;
-    protected int posEnd;
+    private int bufAbsoluteStart; // this is buf
+    private int bufStart;
+    private int bufEnd;
+    private int pos;
+    private int posStart;
+    private int posEnd;
 
-    protected char pc[] = new char[
+    private char pc[] = new char[
         Runtime.getRuntime().freeMemory() > 1000000L ? READ_CHUNK_SIZE : 64 ];
-    protected int pcStart;
-    protected int pcEnd;
+    private int pcStart;
+    private int pcEnd;
 
 
     // parsing state
-    //protected boolean needsMore;
-    //protected boolean seenMarkup;
-    protected boolean usePC;
+    //private boolean needsMore;
+    //private boolean seenMarkup;
+    private boolean usePC;
 
 
-    protected boolean seenStartTag;
-    protected boolean seenEndTag;
-    protected boolean pastEndTag;
-    protected boolean seenAmpersand;
-    protected boolean seenMarkup;
-    protected boolean seenDocdecl;
+    private boolean seenStartTag;
+    private boolean seenEndTag;
+    private boolean pastEndTag;
+    private boolean seenAmpersand;
+    private boolean seenMarkup;
+    private boolean seenDocdecl;
 
     // transient variable set during each call to next/Token()
-    protected boolean tokenize;
-    protected String text;
-    protected String entityRefName;
+    private boolean tokenize;
+    private String text;
+    private String entityRefName;
 
-    protected String xmlDeclVersion;
-    protected Boolean xmlDeclStandalone;
-    protected String xmlDeclContent;
+    private String xmlDeclVersion;
+    private Boolean xmlDeclStandalone;
+    private String xmlDeclContent;
 
-    protected void reset() {
+    private void reset() {
         //System.out.println("reset() called");
         location = null;
         lineNumber = 1;
@@ -571,7 +571,7 @@ public class Xpp3Parser
             }
         }
         
-        //protected char[] entityReplacement[];
+        //private char[] entityReplacement[];
         ensureEntityCapacity();
 
         // this is to make sure that if interning works we will take advantage of it ...
@@ -1407,7 +1407,7 @@ public class Xpp3Parser
     }
 
 
-    protected int parseProlog()
+    private int parseProlog()
         throws XmlPullParserException, IOException
     {
         // [2] prolog: ::= XMLDecl? Misc* (doctypedecl Misc*)? and look for [39] element
@@ -1530,7 +1530,7 @@ public class Xpp3Parser
         }
     }
 
-    protected int parseEpilog()
+    private int parseEpilog()
         throws XmlPullParserException, IOException
     {
         if(eventType == END_DOCUMENT) {
@@ -1901,7 +1901,7 @@ public class Xpp3Parser
         return eventType = START_TAG;
     }
 
-    protected char parseAttribute() throws XmlPullParserException, IOException
+    private char parseAttribute() throws XmlPullParserException, IOException
     {
         // parse attribute
         // [41] Attribute ::= Name Eq AttValue
@@ -2151,9 +2151,9 @@ public class Xpp3Parser
         return ch;
     }
 
-    protected char[] charRefOneCharBuf = new char[1];
+    private char[] charRefOneCharBuf = new char[1];
 
-    protected char[] parseEntityRef()
+    private char[] parseEntityRef()
         throws XmlPullParserException, IOException
     {
         // entity reference http://www.w3.org/TR/2000/REC-xml-20001006#NT-Reference
@@ -2292,7 +2292,7 @@ public class Xpp3Parser
         }
     }
 
-    protected char[] lookuEntityReplacement(int entityNameLen)
+    private char[] lookuEntityReplacement(int entityNameLen)
         throws XmlPullParserException, IOException
 
     {
@@ -2326,7 +2326,7 @@ public class Xpp3Parser
     }
 
 
-    protected void parseComment()
+    private void parseComment()
         throws XmlPullParserException, IOException
     {
         // implements XML 1.0 Section 2.5 Comments
@@ -2415,7 +2415,7 @@ public class Xpp3Parser
         }
     }
 
-    protected boolean parsePI()
+    private boolean parsePI()
         throws XmlPullParserException, IOException
     {
         // implements XML 1.0 Section 2.6 Processing Instructions
@@ -2556,21 +2556,21 @@ public class Xpp3Parser
         return true;
     }
 
-    //    protected final static char[] VERSION = {'v','e','r','s','i','o','n'};
-    //    protected final static char[] NCODING = {'n','c','o','d','i','n','g'};
-    //    protected final static char[] TANDALONE = {'t','a','n','d','a','l','o','n','e'};
-    //    protected final static char[] YES = {'y','e','s'};
-    //    protected final static char[] NO = {'n','o'};
+    //    private final static char[] VERSION = {'v','e','r','s','i','o','n'};
+    //    private final static char[] NCODING = {'n','c','o','d','i','n','g'};
+    //    private final static char[] TANDALONE = {'t','a','n','d','a','l','o','n','e'};
+    //    private final static char[] YES = {'y','e','s'};
+    //    private final static char[] NO = {'n','o'};
 
-    protected final static char[] VERSION = "version".toCharArray();
-    protected final static char[] NCODING = "ncoding".toCharArray();
-    protected final static char[] TANDALONE = "tandalone".toCharArray();
-    protected final static char[] YES = "yes".toCharArray();
-    protected final static char[] NO = "no".toCharArray();
+    private final static char[] VERSION = "version".toCharArray();
+    private final static char[] NCODING = "ncoding".toCharArray();
+    private final static char[] TANDALONE = "tandalone".toCharArray();
+    private final static char[] YES = "yes".toCharArray();
+    private final static char[] NO = "no".toCharArray();
 
 
 
-    protected void parseXmlDecl(char ch)
+    private void parseXmlDecl(char ch)
         throws XmlPullParserException, IOException
     {
         // [23] XMLDecl ::= '<?xml' VersionInfo EncodingDecl? SDDecl? S? '?>'
@@ -2617,9 +2617,9 @@ public class Xpp3Parser
         parseXmlDeclWithVersion(versionStart, versionEnd);
         preventBufferCompaction = false; // allow again buffer compaction - pos MAY change
     }
-    //protected String xmlDeclVersion;
+    //private String xmlDeclVersion;
 
-    protected void parseXmlDeclWithVersion(int versionStart, int versionEnd)
+    private void parseXmlDeclWithVersion(int versionStart, int versionEnd)
         throws XmlPullParserException, IOException
     {
         String oldEncoding = this.inputEncoding;
@@ -2758,7 +2758,7 @@ public class Xpp3Parser
 //            }
 //        }
     }
-    protected void parseDocdecl()
+    private void parseDocdecl()
         throws XmlPullParserException, IOException
     {
         //ASSUMPTION: seen <!D
@@ -2830,7 +2830,7 @@ public class Xpp3Parser
         posEnd = pos - 1;
     }
 
-    protected void parseCDSect(boolean hadCharData)
+    private void parseCDSect(boolean hadCharData)
         throws XmlPullParserException, IOException
     {
         // implements XML 1.0 Section 2.7 CDATA Sections
@@ -2951,7 +2951,7 @@ public class Xpp3Parser
         posEnd = pos - 3;
     }
 
-    protected void fillBuf() throws IOException, XmlPullParserException {
+    private void fillBuf() throws IOException, XmlPullParserException {
         if(reader == null) throw new XmlPullParserException(
                 "reader must be set before parsing is started");
 
@@ -3070,7 +3070,7 @@ public class Xpp3Parser
         }
     }
 
-    protected char more() throws IOException, XmlPullParserException {
+    private char more() throws IOException, XmlPullParserException {
         if(pos >= bufEnd) {
             fillBuf();
             // this return value should be ignored as it is used in epilog parsing ...
@@ -3094,7 +3094,7 @@ public class Xpp3Parser
     //        return pos + bufAbsoluteStart;
     //    }
 
-    protected void ensurePC(int end) {
+    private void ensurePC(int end) {
         //assert end >= pc.length;
         final int newSize = end > READ_CHUNK_SIZE ? 2 * end : 2 * READ_CHUNK_SIZE;
         final char[] newPC = new char[ newSize ];
@@ -3104,7 +3104,7 @@ public class Xpp3Parser
         //assert end < pc.length;
     }
 
-    protected void joinPC() {
+    private void joinPC() {
         //assert usePC == false;
         //assert posEnd > posStart;
         final int len = posEnd - posStart;
@@ -3117,7 +3117,7 @@ public class Xpp3Parser
 
     }
 
-    protected char requireInput(char ch, char[] input)
+    private char requireInput(char ch, char[] input)
         throws XmlPullParserException, IOException
     {
         for (char anInput : input)
@@ -3132,7 +3132,7 @@ public class Xpp3Parser
         return ch;
     }
 
-    protected char requireNextS()
+    private char requireNextS()
         throws XmlPullParserException, IOException
     {
         final char ch = more();
@@ -3143,7 +3143,7 @@ public class Xpp3Parser
         return skipS(ch);
     }
 
-    protected char skipS(char ch)
+    private char skipS(char ch)
         throws XmlPullParserException, IOException
     {
         while(isS(ch)) { ch = more(); } // skip additional spaces
@@ -3151,12 +3151,12 @@ public class Xpp3Parser
     }
 
     // nameStart / name lookup tables based on XML 1.1 http://www.w3.org/TR/2001/WD-xml11-20011213/
-    protected static final int LOOKUP_MAX = 0x400;
-    protected static final char LOOKUP_MAX_CHAR = (char)LOOKUP_MAX;
-    //    protected static int lookupNameStartChar[] = new int[ LOOKUP_MAX_CHAR / 32 ];
-    //    protected static int lookupNameChar[] = new int[ LOOKUP_MAX_CHAR / 32 ];
-    protected static boolean lookupNameStartChar[] = new boolean[ LOOKUP_MAX ];
-    protected static boolean lookupNameChar[] = new boolean[ LOOKUP_MAX ];
+    private static final int LOOKUP_MAX = 0x400;
+    private static final char LOOKUP_MAX_CHAR = (char)LOOKUP_MAX;
+    //    private static int lookupNameStartChar[] = new int[ LOOKUP_MAX_CHAR / 32 ];
+    //    private static int lookupNameChar[] = new int[ LOOKUP_MAX_CHAR / 32 ];
+    private static boolean lookupNameStartChar[] = new boolean[ LOOKUP_MAX ];
+    private static boolean lookupNameChar[] = new boolean[ LOOKUP_MAX ];
 
     private static final void setName(char ch)
         //{ lookupNameChar[ (int)ch / 32 ] |= (1 << (ch % 32)); }
@@ -3182,7 +3182,7 @@ public class Xpp3Parser
     }
 
     //private final static boolean isNameStartChar(char ch) {
-    protected boolean isNameStartChar(char ch) {
+    private boolean isNameStartChar(char ch) {
         return ch < LOOKUP_MAX_CHAR
                 ? lookupNameStartChar[ch]
                 : (ch <= '\u2027') || (ch >= '\u202A' && ch <= '\u218F') || (ch >= '\u2800' && ch <= '\uFFEF');
@@ -3210,7 +3210,7 @@ public class Xpp3Parser
     }
 
     //private final static boolean isNameChar(char ch) {
-    protected boolean isNameChar(char ch) {
+    private boolean isNameChar(char ch) {
         //return isNameStartChar(ch);
 
         //        if(ch < LOOKUP_MAX_CHAR) return (lookupNameChar[ (int)ch / 32 ] & (1 << (ch % 32))) != 0;
@@ -3234,17 +3234,17 @@ public class Xpp3Parser
         //else return false;
     }
 
-    protected boolean isS(char ch) {
+    private boolean isS(char ch) {
         return (ch == ' ' || ch == '\n' || ch == '\r' || ch == '\t');
         // || (supportXml11 && (ch == '\u0085' || ch == '\u2028');
     }
 
-    //protected boolean isChar(char ch) { return (ch < '\uD800' || ch > '\uDFFF')
+    //private boolean isChar(char ch) { return (ch < '\uD800' || ch > '\uDFFF')
     //  ch != '\u0000' ch < '\uFFFE'
 
 
-    //protected char printable(char ch) { return ch; }
-    protected String printable(char ch) {
+    //private char printable(char ch) { return ch; }
+    private String printable(char ch) {
         if(ch == '\n') {
             return "\\n";
         } else if(ch == '\r') {
@@ -3259,7 +3259,7 @@ public class Xpp3Parser
         return ""+ch;
     }
 
-    protected String printable(String s) {
+    private String printable(String s) {
         if(s == null) return null;
         final int sLen = s.length();
         StringBuilder buf = new StringBuilder(sLen + 10);
