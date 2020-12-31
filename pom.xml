@@ -185,7 +185,7 @@
               <manifestEntries>
                 <Specification-Version>${project.info.majorVersion}.${project.info.minorVersion}</Specification-Version>
                 <Bundle-License>Indiana University Extreme! Lab Software License</Bundle-License>
-                <Automatic-Module-Name>io.github.xstream.xpp3</Automatic-Module-Name>
+                <Automatic-Module-Name>${jar.module.name}</Automatic-Module-Name>
                 <X-Compile-Source>${version.java.source}</X-Compile-Source>
                 <X-Compile-Target>${version.java.target}</X-Compile-Target>
                 <X-Builder>Maven ${maven.version}</X-Builder>
@@ -607,8 +607,9 @@
     <version.xmlpull>1.1.3.1</version.xmlpull>
     <version.junit>4.13.1</version.junit>
 
-    <bundle.export.package>${project.groupId}.*;-noimport:=true</bundle.export.package>
+    <bundle.export.package>${jar.module.name};-noimport:=true</bundle.export.package>
     <bundle.import.package>*</bundle.import.package>
+    <jar.module.name>io.github.xstream.xpp3</jar.module.name>
     <javadoc.link.javase>http://docs.oracle.com/javase/8/docs/api/</javadoc.link.javase>
     <javadoc.xdoclint />
   </properties>
