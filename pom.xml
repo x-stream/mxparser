@@ -17,7 +17,7 @@
   <name>MXParser</name>
   <url>http://x-stream.github.io/mxparser</url>
   <description>
-    MXParser is a fork of xpp3_min containing only the parser.
+    MXParser is a fork of xpp3_min 1.1.7 containing only the parser with merged changes of the Plexus fork.
   </description>
 
   <inceptionYear>2020</inceptionYear>
