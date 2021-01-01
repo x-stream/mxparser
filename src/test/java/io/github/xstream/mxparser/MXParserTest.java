@@ -1,4 +1,4 @@
-package io.github.xstream.xpp3;
+package io.github.xstream.mxparser;
 
 /*
  * Copyright The Codehaus Foundation.
@@ -26,20 +26,19 @@ import java.io.StringReader;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
  * @author <a href="mailto:trygvis@inamo.no">Trygve Laugst&oslash;l</a>
  *
  */
-public class Xpp3ParserTest
+public class MXParserTest
 {
     @Test
     public void testHexadecimalEntities()
         throws Exception
     {
-        Xpp3Parser parser = new Xpp3Parser();
+        MXParser parser = new MXParser();
         parser.defineEntityReplacementText( "test", "replacement" );
 
         String input = "<root>&#x41;</root>";
@@ -55,7 +54,7 @@ public class Xpp3ParserTest
     public void testDecimalEntities()
         throws Exception
     {
-        Xpp3Parser parser = new Xpp3Parser();
+        MXParser parser = new MXParser();
         parser.defineEntityReplacementText( "test", "replacement" );
 
         String input = "<root>&#65;</root>";
@@ -71,7 +70,7 @@ public class Xpp3ParserTest
     public void testPredefinedEntities()
         throws Exception
     {
-        Xpp3Parser parser = new Xpp3Parser();
+        MXParser parser = new MXParser();
         parser.defineEntityReplacementText( "test", "replacement" );
 
         String input = "<root>&lt;&gt;&amp;&apos;&quot;</root>";
@@ -87,7 +86,7 @@ public class Xpp3ParserTest
     public void testCustomEntities()
         throws Exception
     {
-        Xpp3Parser parser = new Xpp3Parser();
+        MXParser parser = new MXParser();
         String input = "<root>&myentity;</root>";
         parser.setInput( new StringReader( input ) );
         parser.defineEntityReplacementText( "myentity", "replacement" );
@@ -96,7 +95,7 @@ public class Xpp3ParserTest
         assertEquals( "replacement", parser.getText() );
         assertEquals( XmlPullParser.END_TAG, parser.next() );
 
-        parser = new Xpp3Parser();
+        parser = new MXParser();
         input = "<root>&myCustom;</root>";
         parser.setInput( new StringReader( input ) );
         parser.defineEntityReplacementText( "fo", "&#65;" );
@@ -111,7 +110,7 @@ public class Xpp3ParserTest
     public void testUnicodeEntities()
         throws Exception
     {
-        Xpp3Parser parser = new Xpp3Parser();
+        MXParser parser = new MXParser();
         String input = "<root>&#x1d7ed;</root>";
         parser.setInput( new StringReader( input ) );
 
@@ -120,7 +119,7 @@ public class Xpp3ParserTest
         assertEquals( "\uD835\uDFED", parser.getText() );
         assertEquals( XmlPullParser.END_TAG, parser.nextToken() );
 
-        parser = new Xpp3Parser();
+        parser = new MXParser();
         input = "<root>&#x159;</root>";
         parser.setInput( new StringReader( input ) );
 
@@ -134,7 +133,7 @@ public class Xpp3ParserTest
     public void testInvalidCharacterReferenceHexa()
         throws Exception
     {
-        Xpp3Parser parser = new Xpp3Parser();
+        MXParser parser = new MXParser();
         String input = "<root>&#x110000;</root>";
         parser.setInput( new StringReader( input ) );
 
@@ -154,7 +153,7 @@ public class Xpp3ParserTest
     public void testValidCharacterReferenceHexa()
         throws Exception
     {
-        Xpp3Parser parser = new Xpp3Parser();
+        MXParser parser = new MXParser();
         String input = "<root>&#x9;&#xA;&#xD;&#x20;&#x200;&#xD7FF;&#xE000;&#xFFA2;&#xFFFD;&#x10000;&#x10FFFD;&#x10FFFF;</root>";
         parser.setInput( new StringReader( input ) );
 
@@ -197,7 +196,7 @@ public class Xpp3ParserTest
     public void testInvalidCharacterReferenceDecimal()
         throws Exception
     {
-        Xpp3Parser parser = new Xpp3Parser();
+        MXParser parser = new MXParser();
         String input = "<root>&#1114112;</root>";
         parser.setInput( new StringReader( input ) );
 
@@ -217,7 +216,7 @@ public class Xpp3ParserTest
     public void testValidCharacterReferenceDecimal()
         throws Exception
     {
-        Xpp3Parser parser = new Xpp3Parser();
+        MXParser parser = new MXParser();
         String input = "<root>&#9;&#10;&#13;&#32;&#512;&#55295;&#57344;&#65442;&#65533;&#65536;&#1114109;&#1114111;</root>";
         parser.setInput( new StringReader( input ) );
 
@@ -260,7 +259,7 @@ public class Xpp3ParserTest
     public void testValidCDATA()
         throws Exception
     {
-        Xpp3Parser parser = new Xpp3Parser();
+        MXParser parser = new MXParser();
         String input = "<root><![CDATA[x]],if(c[a]>3&&a.v)]]></root>";
         parser.setInput( new StringReader( input ) );
 
@@ -276,7 +275,7 @@ public class Xpp3ParserTest
     {
         String input = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><test>nnn</test>";
 
-        Xpp3Parser parser = new Xpp3Parser();
+        MXParser parser = new MXParser();
         parser.setInput( new StringReader( input ) );
 
         assertEquals( XmlPullParser.PROCESSING_INSTRUCTION, parser.nextToken() );
@@ -298,7 +297,7 @@ public class Xpp3ParserTest
         sb.append( " ?>\n" );
         sb.append( "</project>" );
 
-        Xpp3Parser parser = new Xpp3Parser();
+        MXParser parser = new MXParser();
         parser.setInput( new StringReader( sb.toString() ) );
 
         assertEquals( XmlPullParser.PROCESSING_INSTRUCTION, parser.nextToken() );
@@ -320,7 +319,7 @@ public class Xpp3ParserTest
         sb.append( "   <tag>\n" );
         sb.append( "   </tag>>\n" );
 
-        Xpp3Parser parser = new Xpp3Parser();
+        MXParser parser = new MXParser();
         parser.setInput( new StringReader( sb.toString() ) );
 
         try
@@ -351,7 +350,7 @@ public class Xpp3ParserTest
         sb.append( "<?m2e ignore?>" );
         sb.append( "</project>" );
 
-        Xpp3Parser parser = new Xpp3Parser();
+        MXParser parser = new MXParser();
         parser.setInput( new StringReader( sb.toString() ) );
 
         assertEquals( XmlPullParser.PROCESSING_INSTRUCTION, parser.nextToken() );
@@ -384,7 +383,7 @@ public class Xpp3ParserTest
         sb.append( "<?m2e ignore?>" );
         sb.append( "</project>" );
 
-        Xpp3Parser parser = new Xpp3Parser();
+        MXParser parser = new MXParser();
         parser.setInput( new StringReader( sb.toString() ) );
 
         assertEquals( XmlPullParser.PROCESSING_INSTRUCTION, parser.nextToken() );
@@ -416,7 +415,7 @@ public class Xpp3ParserTest
         sb.append( new String( new char[33554432] ) );
         sb.append( "</largetextblock>" );
 
-        Xpp3Parser parser = new Xpp3Parser();
+        MXParser parser = new MXParser();
         parser.setInput( new StringReader( sb.toString() ) );
 
         assertEquals( XmlPullParser.PROCESSING_INSTRUCTION, parser.nextToken() );
@@ -429,7 +428,7 @@ public class Xpp3ParserTest
     public void testMalformedProcessingInstructionAfterTag()
         throws Exception
     {
-        Xpp3Parser parser = new Xpp3Parser();
+        MXParser parser = new MXParser();
         String input = "<project /><?>";
 
         parser.setInput( new StringReader( input ) );
@@ -452,7 +451,7 @@ public class Xpp3ParserTest
     public void testMalformedProcessingInstructionBeforeTag()
         throws Exception
     {
-        Xpp3Parser parser = new Xpp3Parser();
+        MXParser parser = new MXParser();
         String input = "<?><project />";
 
         parser.setInput( new StringReader( input ) );
@@ -475,7 +474,7 @@ public class Xpp3ParserTest
     public void testMalformedProcessingInstructionSpaceBeforeName()
         throws Exception
     {
-        Xpp3Parser parser = new Xpp3Parser();
+        MXParser parser = new MXParser();
         StringBuilder sb = new StringBuilder();
         sb.append( "<? shouldhavenospace>" );
         sb.append( "<project />" );
@@ -500,7 +499,7 @@ public class Xpp3ParserTest
     public void testMalformedProcessingInstructionNoClosingQuestionMark()
         throws Exception
     {
-        Xpp3Parser parser = new Xpp3Parser();
+        MXParser parser = new MXParser();
         StringBuilder sb = new StringBuilder();
         sb.append( "<?shouldhavenospace>" );
         sb.append( "<project />" );
@@ -525,7 +524,7 @@ public class Xpp3ParserTest
     public void testSubsequentMalformedProcessingInstructionNoClosingQuestionMark()
         throws Exception
     {
-        Xpp3Parser parser = new Xpp3Parser();
+        MXParser parser = new MXParser();
         StringBuilder sb = new StringBuilder();
         sb.append( "<project />" );
         sb.append( "<?shouldhavenospace>" );
@@ -550,7 +549,7 @@ public class Xpp3ParserTest
     public void testMalformedXMLRootElement()
         throws Exception
     {
-        Xpp3Parser parser = new Xpp3Parser();
+        MXParser parser = new MXParser();
         String input = "<Y";
         parser.setInput( new StringReader( input ) );
 
@@ -570,7 +569,7 @@ public class Xpp3ParserTest
     public void testMalformedXMLRootElement2()
         throws Exception
     {
-        Xpp3Parser parser = new Xpp3Parser();
+        MXParser parser = new MXParser();
         String input = "<hello";
         parser.setInput( new StringReader( input ) );
 
@@ -590,7 +589,7 @@ public class Xpp3ParserTest
     public void testMalformedXMLRootElement3()
         throws Exception
     {
-        Xpp3Parser parser = new Xpp3Parser();
+        MXParser parser = new MXParser();
         String input = "<hello><how";
         parser.setInput( new StringReader( input ) );
 
@@ -611,7 +610,7 @@ public class Xpp3ParserTest
     public void testMalformedXMLRootElement4()
         throws Exception
     {
-        Xpp3Parser parser = new Xpp3Parser();
+        MXParser parser = new MXParser();
         String input = "<hello>some text<how";
         parser.setInput( new StringReader( input ) );
 
@@ -634,7 +633,7 @@ public class Xpp3ParserTest
     public void testMalformedXMLRootElement5()
         throws Exception
     {
-        Xpp3Parser parser = new Xpp3Parser();
+        MXParser parser = new MXParser();
         String input = "<hello>some text</hello";
         parser.setInput( new StringReader( input ) );
 

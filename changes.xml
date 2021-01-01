@@ -2,7 +2,7 @@
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 http://maven.apache.org/xsd/changes-1.0.0.xsd">
     <properties>
-        <title>Changes for Xpp3Parser</title>
+        <title>Changes for MXParser</title>
         <author>Joerg Schaible</author>
     </properties>
     <body>
@@ -11,7 +11,7 @@
             <action dev="joehni" type="update">Incorporate changes of Plexus fork of MXParser.</action>
             <action dev="joehni" type="add">Add Maven project.</action>
             <action dev="joehni" type="update">Register parser as XmlPullParser service.</action>
-            <action dev="joehni" type="add">Fork MXParser of Xpp3 as Xpp3Parser.</action>
+            <action dev="joehni" type="add">Fork MXParser of Xpp3.</action>
         </release>
     </body>
 </document>

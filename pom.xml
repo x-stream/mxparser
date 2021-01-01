@@ -11,27 +11,27 @@
      -->
   <modelVersion>4.0.0</modelVersion>
   <groupId>io.github.x-stream</groupId>
-  <artifactId>xpp3parser</artifactId>
+  <artifactId>mxparser</artifactId>
   <packaging>jar</packaging>
   <version>1.2.0-SNAPSHOT</version>
-  <name>Xpp3 Parser</name>
-  <url>http://x-stream.github.io/xpp3parser</url>
+  <name>MXParser</name>
+  <url>http://x-stream.github.io/mxparser</url>
   <description>
-    Xpp3 Parser is a fork of xpp3_min containing only the parser.
+    MXParser is a fork of xpp3_min containing only the parser.
   </description>
 
   <inceptionYear>2020</inceptionYear>
   <licenses>
     <license>
       <name>Indiana University Extreme! Lab Software License</name>
-      <url>https://raw.githubusercontent.com/x-stream/xpp3parser/master/LICENSE.txt</url>
+      <url>https://raw.githubusercontent.com/x-stream/mxparser/master/LICENSE.txt</url>
       <distribution>repo</distribution>
     </license>
   </licenses>
 
   <developers>
     <developer>
-      <id>xpp3parser</id>
+      <id>mxparser</id>
       <name>XStream Committers</name>
       <url>http://x-stream.github.io/team.html</url>
     </developer>
@@ -67,7 +67,7 @@
       </build>
     </profile>
     <profile>
-      <id>xpp3parser-release</id>
+      <id>mxparser-release</id>
       <properties>
         <version.java.enforced>[1.8,1.9)</version.java.enforced>
       </properties>
@@ -93,11 +93,11 @@
 
   <issueManagement>
     <system>github</system>
-    <url>https://github.com/x-stream/xpp3parser/issues/</url>
+    <url>https://github.com/x-stream/mxparser/issues/</url>
   </issueManagement>
   <ciManagement>
     <system>Travis</system>
-    <url>https://travis-ci.org/x-stream/xpp3parser</url>
+    <url>https://travis-ci.org/x-stream/mxparser</url>
   </ciManagement>
 
   <dependencyManagement>
@@ -240,7 +240,7 @@
             <goals>deploy site</goals>
             <autoVersionSubmodules>true</autoVersionSubmodules>
             <useReleaseProfile>false</useReleaseProfile>
-            <arguments>-Pxpp3parser-release</arguments>
+            <arguments>-Pmxparser-release</arguments>
           </configuration>
         </plugin>
         <plugin>
@@ -583,14 +583,14 @@
     </snapshotRepository>
     <site>
       <id>github</id>
-      <url>scm:git:ssh://git@github.com/x-stream/xpp3parser.git</url>
+      <url>scm:git:ssh://git@github.com/x-stream/mxparser.git</url>
     </site>
   </distributionManagement>
 
   <scm>
-    <url>https://github.com/x-stream/xpp3parser</url>
-    <developerConnection>scm:git:ssh://git@github.com/x-stream/xpp3parser.git</developerConnection>
-    <connection>scm:git:ssh://git@github.com/x-stream/xpp3parser.git</connection>
+    <url>https://github.com/x-stream/mxparser</url>
+    <developerConnection>scm:git:ssh://git@github.com/x-stream/mxparser.git</developerConnection>
+    <connection>scm:git:ssh://git@github.com/x-stream/mxparser.git</connection>
     <tag>HEAD</tag>
   </scm>
   
@@ -627,7 +627,7 @@
 
     <bundle.export.package>${jar.module.name};-noimport:=true</bundle.export.package>
     <bundle.import.package>*</bundle.import.package>
-    <jar.module.name>io.github.xstream.xpp3</jar.module.name>
+    <jar.module.name>io.github.xstream.mxparser</jar.module.name>
     <javadoc.link.javase>http://docs.oracle.com/javase/8/docs/api/</javadoc.link.javase>
     <javadoc.xdoclint />
   </properties>

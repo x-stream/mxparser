@@ -5,7 +5,7 @@
  * This software is open source. See the bottom of this file for the license.
  */
 
-package io.github.xstream.xpp3;
+package io.github.xstream.mxparser;
 
 import java.io.EOFException;
 import java.io.IOException;
@@ -29,7 +29,7 @@ import org.xmlpull.v1.XmlPullParserException;
  * @author <a href="http://www.extreme.indiana.edu/~aslom/">Aleksander Slominski</a>
  */
 
-public class Xpp3Parser
+public class MXParser
     implements XmlPullParser
 {
     //NOTE: no interning of those strings --> by Java lang spec they MUST be already interned
@@ -419,7 +419,7 @@ public class Xpp3Parser
         resetStringCache();
     }
 
-    public Xpp3Parser() {
+    public MXParser() {
     }
 
 
