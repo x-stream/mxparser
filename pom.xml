@@ -441,6 +441,22 @@
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>default-testCompile</id>
+            <goals>
+              <goal>testCompile</goal>
+            </goals>
+            <configuration>
+                <source>${version.java.test.source}</source>
+                <target>${version.java.test.target}</target>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
         <executions>
           <execution>
@@ -581,8 +597,10 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-    <version.java.source>1.5</version.java.source>
-    <version.java.target>1.5</version.java.target>
+    <version.java.source>1.4</version.java.source>
+    <version.java.target>1.4</version.java.target>
+    <version.java.test.source>1.5</version.java.test.source>
+    <version.java.test.target>1.5</version.java.test.target>
 
     <version.plugin.felix.bundle>2.3.7</version.plugin.felix.bundle>
     <version.plugin.maven.antrun>3.0.0</version.plugin.maven.antrun>

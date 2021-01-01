@@ -1307,10 +1307,10 @@ public class Xpp3Parser
                     }
                     //assert usePC == true;
                     // write into PC replacement text - do merge for replacement text!!!!
-                    for (char aResolvedEntity : resolvedEntity)
+                    for (int i = 0; i < resolvedEntity.length; i++)
                     {
                         if(pcEnd >= pc.length) ensurePC(pcEnd);
-                        pc[pcEnd++] = aResolvedEntity;
+                        pc[pcEnd++] = resolvedEntity[ i ];
 
                     }
                     hadCharData = true;
@@ -2056,10 +2056,10 @@ public class Xpp3Parser
                         this, null);
                 }
                 // write into PC replacement text - do merge for replacement text!!!!
-                for (char aResolvedEntity : resolvedEntity)
+                for (int i = 0; i < resolvedEntity.length; i++)
                 {
                     if(pcEnd >= pc.length) ensurePC(pcEnd);
-                    pc[pcEnd++] = aResolvedEntity;
+                    pc[pcEnd++] = resolvedEntity[ i ];
                 }
             } else if(ch == '\t' || ch == '\n' || ch == '\r') {
                 // do attribute value normalization
@@ -3120,11 +3120,11 @@ public class Xpp3Parser
     private char requireInput(char ch, char[] input)
         throws XmlPullParserException, IOException
     {
-        for (char anInput : input)
+        for (int i = 0; i < input.length; i++)
         {
-            if(ch != anInput) {
+            if(ch != input[i]) {
                 throw new XmlPullParserException(
-                    "expected "+printable(anInput)+" in "+new String(input)
+                    "expected "+printable(input[i])+" in "+new String(input)
                         +" and not "+printable(ch), this, null);
             }
             ch = more();
