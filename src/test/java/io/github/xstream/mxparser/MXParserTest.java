@@ -364,7 +364,7 @@ public class MXParserTest
         }
         catch ( XmlPullParserException ex )
         {
-            assertTrue( ex.getMessage().contains( "processing instruction started on line 3 and column 3 was not closed" ) );
+            assertTrue( ex.getMessage().contains( "processing instruction started on line 3 and column 1 was not closed" ) );
         }
     }
 
@@ -545,7 +545,7 @@ public class MXParserTest
         }
         catch ( XmlPullParserException ex )
         {
-            assertTrue( ex.getMessage().contains( "processing instruction started on line 1 and column 3 was not closed" ) );
+            assertTrue( ex.getMessage().contains( "processing instruction started on line 1 and column 1 was not closed" ) );
         }
     }
 
@@ -570,7 +570,7 @@ public class MXParserTest
         }
         catch ( XmlPullParserException ex )
         {
-            assertTrue( ex.getMessage().contains( "processing instruction started on line 1 and column 14 was not closed" ) );
+            assertTrue( ex.getMessage().contains( "processing instruction started on line 1 and column 12 was not closed" ) );
         }
     }
 
