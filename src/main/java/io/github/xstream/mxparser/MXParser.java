@@ -3077,10 +3077,10 @@ public class MXParser
             if(reachedEnd) return (char)-1;
         }
         final char ch = buf[pos++];
+        //System.out.println(lineNumber +"/"+columnNumber+": "+printable(ch));
         //line/columnNumber
         if(ch == '\n') { ++lineNumber; columnNumber = 1; }
         else { ++columnNumber; }
-        //System.out.print(ch);
         return ch;
     }
 
