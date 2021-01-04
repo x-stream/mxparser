@@ -2338,7 +2338,7 @@ public class MXParser
         if(tokenize) posStart = pos;
 
         final int curLine = lineNumber;
-        final int curColumn = columnNumber;
+        final int curColumn = columnNumber - 4;
         try {
             final boolean normalizeIgnorableWS = tokenize && !roundtripSupported;
             boolean normalizedCR = false;
@@ -2348,6 +2348,9 @@ public class MXParser
             while(true) {
                 // scan until it hits -->
                 ch = more();
+                if (ch == (char)-1) {
+                    throw new EOFException("no more data available"+getPositionDescription());
+                }
                 if(seenDashDash && ch != '>') {
                     throw new XmlPullParserException(
                         "in comment after two dashes (--) next character must be >"
@@ -2425,7 +2428,7 @@ public class MXParser
         //ASSUMPTION: seen <?
         if(tokenize) posStart = pos;
         final int curLine = lineNumber;
-        final int curColumn = columnNumber;
+        final int curColumn = columnNumber - 2;
         int piTargetStart = pos;
         int piTargetEnd = -1;
         final boolean normalizeIgnorableWS = tokenize && !roundtripSupported;
@@ -2445,6 +2448,9 @@ public class MXParser
                 // scan until it hits ?>
                 //ch = more();
 
+                if (ch == (char)-1) {
+                    throw new EOFException("no more data available"+getPositionDescription());
+                }
                 if(ch == '?') {
                     if (!seenPITarget) {
                         throw new XmlPullParserException("processing instruction PITarget name not found", this, null);
@@ -2459,7 +2465,7 @@ public class MXParser
                     } else if (!seenInnerTag){
                         // seenPITarget && !seenQ
                         throw new XmlPullParserException( "processing instruction started on line " + curLine
-                            + " and column " + (curColumn - 2) + " was not closed", this, null );
+                            + " and column " + curColumn + " was not closed", this, null );
                     } else
                         seenInnerTag = false;
                 } else if (ch == '<') {
@@ -2538,8 +2544,8 @@ public class MXParser
         } catch(EOFException ex) {
             // detect EOF and create meaningful error ...
             throw new XmlPullParserException(
-                "processing instruction started on line "+curLine+" and column "+(curColumn-2)
-                    +" was not closed",
+                "processing instruction started on line " + curLine +
+                " and column " + curColumn + " was not closed",
                 this, ex);
         }
         if(piTargetEnd == -1) {
