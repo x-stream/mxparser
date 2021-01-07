@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/x-stream/mxparser.svg?branch=master)](https://travis-ci.org/x-stream/mxparser)
+[![CI with Maven](https://github.com/x-stream/mxparser/workflows/CI%20with%20Maven/badge.svg)](https://github.com/x-stream/mxparser/actions?query=workflow%3A%22CI+with+Maven%22)
 
 ----
 # MXParser
