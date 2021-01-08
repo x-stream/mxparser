@@ -60,6 +60,7 @@
               </execution>
             </executions>
             <configuration>
+              <xmlPath>${basedir}/changes.xml</xmlPath>
               <failOnError>true</failOnError>
             </configuration>
           </plugin>
@@ -513,7 +514,7 @@
           </reportSet>
         </reportSets>
         <configuration>
-          <xmlPath>${basdir}/changes.xml</xmlPath>
+          <xmlPath>${basedir}/changes.xml</xmlPath>
         </configuration>
       </plugin>
       <plugin>
