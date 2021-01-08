@@ -237,7 +237,7 @@
           <version>${version.plugin.maven.release}</version>
           <configuration>
             <mavenExecutorId>forked-path</mavenExecutorId>
-            <goals>deploy site</goals>
+            <goals>deploy site-deploy</goals>
             <autoVersionSubmodules>true</autoVersionSubmodules>
             <useReleaseProfile>false</useReleaseProfile>
             <arguments>-Pmxparser-release</arguments>
