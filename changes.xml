@@ -6,7 +6,14 @@
         <author>Joerg Schaible</author>
     </properties>
     <body>
-        <release version="1.2.0-SNAPSHOT" date="yyy-MM-dd" description="Initial version after fork">
+        <release version="1.2.0" date="2021-01-08" description="Initial version after fork">
+            <action dev="joehni" type="update">Make MXParser Java 1.4 compatible again.</action>
+            <action dev="joehni" type="fix">Fix parser position calculation.</action>
+            <action dev="joehni" type="fix">Fix CDATA parser after processing double closing square brackets.</action>
+            <action dev="joehni" type="update">Support XMl in processing instructions.</action>
+            <action dev="joehni" type="fix">Fix endless loops.</action>
+            <action dev="joehni" type="add">Add automatic module name.</action>
+            <action dev="joehni" type="update">Deploy site to GitHub Pages.</action>
             <action dev="joehni" type="add">Add unit tests from Plexus.</action>
             <action dev="joehni" type="update">Incorporate changes of Plexus fork of MXParser.</action>
             <action dev="joehni" type="add">Add Maven project.</action>
