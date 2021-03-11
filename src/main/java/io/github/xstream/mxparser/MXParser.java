@@ -375,6 +375,8 @@ public class MXParser
     private Boolean xmlDeclStandalone;
     private String xmlDeclContent;
 
+    private static boolean noUnicode4;
+
     private void reset() {
         //System.out.println("reset() called");
         location = null;
@@ -2167,7 +2169,7 @@ public class MXParser
             // parse character reference
             char charRef = 0;
             ch = more();
-            StringBuilder sb = new StringBuilder();
+            StringBuffer sb = new StringBuffer();
             boolean isHex = (ch == 'x');
             if (isHex) {
                 //encoded in hex
@@ -2207,14 +2209,30 @@ public class MXParser
                 }
             }
             posEnd = pos - 1;
-            try {
-                charRefOneCharBuf = Character.toChars(Integer.parseInt(sb.toString(), isHex ? 16 : 10));
-            } catch (IllegalArgumentException e) {
-                throw new XmlPullParserException("character reference (with "
-                    + (isHex ? "hex" : "decimal")
-                    + " value "
-                    + sb.toString()
-                    + ") is invalid", this, null);
+            if (!noUnicode4) {
+                try {
+                    charRefOneCharBuf = Character.toChars(Integer.parseInt(sb.toString(), isHex ? 16 : 10));
+                } catch (IllegalArgumentException e) {
+                    throw new XmlPullParserException("character reference (with "
+                        + (isHex ? "hex" : "decimal")
+                        + " value "
+                        + sb.toString()
+                        + ") is invalid", this, null);
+                } catch(NoSuchMethodError e) {
+                    noUnicode4 = true;
+                }
+            }
+            if (noUnicode4) {
+                int i = Integer.parseInt(sb.toString(), isHex ? 16 : 10);
+                if (i > Character.MAX_VALUE) {
+                    throw new XmlPullParserException("Unicode character reference (with "
+                            + (isHex ? "hex" : "decimal")
+                            + " value "
+                            + sb.toString()
+                            + ") is not supported in this runtime", this, null);
+                }
+                charRefOneCharBuf = new char[1];
+                charRefOneCharBuf[0] = (char)i;
             }
             if(tokenize) {
                 text = newString(charRefOneCharBuf, 0, charRefOneCharBuf.length);
@@ -3022,7 +3040,7 @@ public class MXParser
                     reachedEnd = true;
                     return;
                 } else {
-                    StringBuilder expectedTagStack = new StringBuilder();
+                    StringBuffer expectedTagStack = new StringBuffer();
                     if(depth > 0) {
                         if (elRawName == null || elRawName[depth] == null) {
                             String tagName = new String(buf, posStart + 1, pos - posStart - 1);
@@ -3268,7 +3286,7 @@ public class MXParser
     private String printable(String s) {
         if(s == null) return null;
         final int sLen = s.length();
-        StringBuilder buf = new StringBuilder(sLen + 10);
+        StringBuffer buf = new StringBuffer(sLen + 10);
         for(int i = 0; i < sLen; ++i) {
             buf.append(printable(s.charAt(i)));
         }
