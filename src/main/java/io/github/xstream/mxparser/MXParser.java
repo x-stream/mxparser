@@ -2452,7 +2452,6 @@ public class MXParser
 
         try {
             boolean seenPITarget = false;
-            boolean seenInnerTag = false;
             boolean seenQ = false;
             char ch = more();
             if(isS(ch)) {
@@ -2478,14 +2477,7 @@ public class MXParser
                     }
                     if (!seenPITarget) {
                         throw new XmlPullParserException("processing instruction PITarget name not found", this, null);
-                    } else if (!seenInnerTag){
-                        // seenPITarget && !seenQ
-                        throw new XmlPullParserException( "processing instruction started on line " + curLine
-                            + " and column " + curColumn + " was not closed", this, null );
-                    } else
-                        seenInnerTag = false;
-                } else if (ch == '<') {
-                    seenInnerTag = true;
+                    }
                 } else {
                     if(piTargetEnd == -1 && isS(ch)) {
                         piTargetEnd = pos - 1;

@@ -6,6 +6,9 @@
         <author>Joerg Schaible</author>
     </properties>
     <body>
+        <release version="1.2.2" date="yyyy-MM-dd" description="Maintenance version">
+            <action dev="joehni" type="fix">Fix handling of Processing Instruction.</action>
+        </release>
         <release version="1.2.1" date="2021-03-12" description="Fix for JDK 1.4 compatibility">
             <action dev="joehni" type="fix">Make MXParser really Java 1.4 compatible again.</action>
         </release>
