@@ -278,7 +278,7 @@ public class MXParserTest
         MXParser parser = new MXParser();
         parser.setInput( new StringReader( input ) );
 
-        assertEquals( XmlPullParser.PROCESSING_INSTRUCTION, parser.nextToken() );
+        assertEquals( XmlPullParser.START_DOCUMENT, parser.nextToken() );
         assertPosition( 1, 39, parser );
         assertEquals( XmlPullParser.COMMENT, parser.nextToken() );
         assertPosition( 1, 49, parser );
@@ -296,10 +296,12 @@ public class MXParserTest
         assertPosition( 3, 2, parser ); // end when next token starts
         assertEquals( XmlPullParser.COMMENT, parser.nextToken() );
         assertPosition( 4, 6, parser );
+        assertEquals( XmlPullParser.END_DOCUMENT, parser.nextToken() );
+        assertPosition( 4, 6, parser );
     }
 
     @Test
-    public void testProcessingInstruction()
+    public void testProcessingXMLDeclaration()
         throws Exception
     {
         String input = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><test>nnn</test>";
@@ -307,10 +309,11 @@ public class MXParserTest
         MXParser parser = new MXParser();
         parser.setInput( new StringReader( input ) );
 
-        assertEquals( XmlPullParser.PROCESSING_INSTRUCTION, parser.nextToken() );
+        assertEquals( XmlPullParser.START_DOCUMENT, parser.nextToken() );
         assertEquals( XmlPullParser.START_TAG, parser.nextToken() );
         assertEquals( XmlPullParser.TEXT, parser.nextToken() );
         assertEquals( XmlPullParser.END_TAG, parser.nextToken() );
+        assertEquals( XmlPullParser.END_DOCUMENT, parser.nextToken() );
     }
 
     @Test
@@ -328,13 +331,14 @@ public class MXParserTest
         MXParser parser = new MXParser();
         parser.setInput( new StringReader( sb.toString() ) );
 
-        assertEquals( XmlPullParser.PROCESSING_INSTRUCTION, parser.nextToken() );
+        assertEquals( XmlPullParser.START_DOCUMENT, parser.nextToken() );
         assertEquals( XmlPullParser.IGNORABLE_WHITESPACE, parser.nextToken() ); // ignorable whitespace
         assertEquals( XmlPullParser.START_TAG, parser.nextToken() );
         assertEquals( XmlPullParser.TEXT, parser.nextToken() ); // whitespace
         assertEquals( XmlPullParser.PROCESSING_INSTRUCTION, parser.nextToken() );
         assertEquals( XmlPullParser.TEXT, parser.nextToken() ); // whitespace
         assertEquals( XmlPullParser.END_TAG, parser.nextToken() );
+        assertEquals( XmlPullParser.END_DOCUMENT, parser.nextToken() );
     }
 
     @Test
@@ -353,12 +357,13 @@ public class MXParserTest
         MXParser parser = new MXParser();
         parser.setInput( new StringReader( sb.toString() ) );
 
-        assertEquals( XmlPullParser.PROCESSING_INSTRUCTION, parser.nextToken() );
+        assertEquals( XmlPullParser.START_DOCUMENT, parser.nextToken() );
         assertEquals( XmlPullParser.START_TAG, parser.nextToken() );
         assertEquals( XmlPullParser.TEXT, parser.nextToken() ); // whitespace
         assertEquals( XmlPullParser.PROCESSING_INSTRUCTION, parser.nextToken() );
         assertEquals( XmlPullParser.TEXT, parser.nextToken() ); // whitespace
         assertEquals( XmlPullParser.END_TAG, parser.nextToken() );
+        assertEquals( XmlPullParser.END_DOCUMENT, parser.nextToken() );
     }
 
     @Test
@@ -377,7 +382,7 @@ public class MXParserTest
 
         try
         {
-            assertEquals( XmlPullParser.PROCESSING_INSTRUCTION, parser.nextToken() );
+            assertEquals( XmlPullParser.START_DOCUMENT, parser.nextToken() );
             assertEquals( XmlPullParser.IGNORABLE_WHITESPACE, parser.nextToken() );
             assertEquals( XmlPullParser.START_TAG, parser.nextToken() );
             assertEquals( XmlPullParser.END_TAG, parser.nextToken() );
@@ -406,11 +411,12 @@ public class MXParserTest
         MXParser parser = new MXParser();
         parser.setInput( new StringReader( sb.toString() ) );
 
-        assertEquals( XmlPullParser.PROCESSING_INSTRUCTION, parser.nextToken() );
+        assertEquals( XmlPullParser.START_DOCUMENT, parser.nextToken() );
         assertEquals( XmlPullParser.START_TAG, parser.nextToken() );
         assertEquals( XmlPullParser.COMMENT, parser.nextToken() );
         assertEquals( XmlPullParser.PROCESSING_INSTRUCTION, parser.nextToken() );
         assertEquals( XmlPullParser.END_TAG, parser.nextToken() );
+        assertEquals( XmlPullParser.END_DOCUMENT, parser.nextToken() );
     }
 
     @Test
@@ -439,7 +445,7 @@ public class MXParserTest
         MXParser parser = new MXParser();
         parser.setInput( new StringReader( sb.toString() ) );
 
-        assertEquals( XmlPullParser.PROCESSING_INSTRUCTION, parser.nextToken() );
+        assertEquals( XmlPullParser.START_DOCUMENT, parser.nextToken() );
         assertEquals( XmlPullParser.START_TAG, parser.nextToken() );
         assertEquals( XmlPullParser.COMMENT, parser.nextToken() );
         assertEquals( XmlPullParser.COMMENT, parser.nextToken() );
@@ -453,6 +459,7 @@ public class MXParserTest
         assertEquals( XmlPullParser.COMMENT, parser.nextToken() );
         assertEquals( XmlPullParser.PROCESSING_INSTRUCTION, parser.nextToken() );
         assertEquals( XmlPullParser.END_TAG, parser.nextToken() );
+        assertEquals( XmlPullParser.END_DOCUMENT, parser.nextToken() );
     }
 
     @Test
@@ -471,10 +478,11 @@ public class MXParserTest
         MXParser parser = new MXParser();
         parser.setInput( new StringReader( sb.toString() ) );
 
-        assertEquals( XmlPullParser.PROCESSING_INSTRUCTION, parser.nextToken() );
+        assertEquals( XmlPullParser.START_DOCUMENT, parser.nextToken() );
         assertEquals( XmlPullParser.START_TAG, parser.nextToken() );
         assertEquals( XmlPullParser.TEXT, parser.nextToken() );
         assertEquals( XmlPullParser.END_TAG, parser.nextToken() );
+        assertEquals( XmlPullParser.END_DOCUMENT, parser.nextToken() );
     }
 
     @Test

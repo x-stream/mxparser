@@ -2508,7 +2508,7 @@ public class MXParser
                                 final int off = piTargetStart + 3;
                                 final int len = pos - 2 - off;
                                 xmlDeclContent = newString(buf, off, len);
-                                return false;
+                                return true;
                             }
                         }
                     }
@@ -2567,7 +2567,7 @@ public class MXParser
                 --pcEnd;
             }
         }
-        return true;
+        return false;
     }
 
     //    private final static char[] VERSION = {'v','e','r','s','i','o','n'};
