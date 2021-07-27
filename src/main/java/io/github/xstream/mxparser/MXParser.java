@@ -2300,7 +2300,7 @@ public class MXParser
                 charRefOneCharBuf[0] = '"';
                 return charRefOneCharBuf;
             } else {
-                final char[] result = lookuEntityReplacement(len);
+                final char[] result = lookupEntityReplacement(len);
                 if(result != null) {
                     return result;
                 }
@@ -2310,9 +2310,7 @@ public class MXParser
         }
     }
 
-    private char[] lookuEntityReplacement(int entityNameLen)
-        throws XmlPullParserException, IOException
-
+    private char[] lookupEntityReplacement(int entityNameLen)
     {
         if(!allStringsInterned) {
             final int hash = fastHash(buf, posStart, posEnd - posStart);
