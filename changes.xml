@@ -6,6 +6,9 @@
         <author>Joerg Schaible</author>
     </properties>
     <body>
+        <release version="1.2.3-SNAPSHOT" date="yyyy-MM-dd" description="Maintenance version">
+            <action dev="joehni" type="add">Add KEYS file with public keys to verify signed artifacts.</action>
+        </release>
         <release version="1.2.2" date="2021-08-19" description="Maintenance version">
             <action dev="joehni" type="fix">Handle XML declaration according specification of XmlPullParser.</action>
             <action dev="joehni" type="fix">Fix handling of Processing Instruction.</action>
