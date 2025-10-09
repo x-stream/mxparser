@@ -625,7 +625,7 @@
     <version.plugin.maven.changes>2.12.1</version.plugin.maven.changes>
     <version.plugin.maven.clean>3.1.0</version.plugin.maven.clean>
     <version.plugin.maven.compiler>3.8.0</version.plugin.maven.compiler>
-    <version.plugin.maven.deploy>3.0.0-M1</version.plugin.maven.deploy>
+    <version.plugin.maven.deploy>4.0.0-beta-2</version.plugin.maven.deploy>
     <version.plugin.maven.gpg>1.6</version.plugin.maven.gpg>
     <version.plugin.maven.install>3.0.0-M1</version.plugin.maven.install>
     <version.plugin.maven.jar>3.2.0</version.plugin.maven.jar>
