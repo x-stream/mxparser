@@ -641,7 +641,7 @@
     <version.plugin.mojo.build-helper>3.2.0</version.plugin.mojo.build-helper>
     <version.plugin.sonatype.central-publishing>0.7.0</version.plugin.sonatype.central-publishing>
 
-    <version.xmlpull>1.1.3.1</version.xmlpull>
+    <version.xmlpull>1.1.3.4a</version.xmlpull>
     <version.junit>4.13.1</version.junit>
 
     <bundle.export.package>${jar.module.name};-noimport:=true</bundle.export.package>
