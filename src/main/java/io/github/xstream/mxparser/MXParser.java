@@ -375,7 +375,7 @@ public class MXParser
     private Boolean xmlDeclStandalone;
     private String xmlDeclContent;
 
-    private static boolean noUnicode4;
+    private static boolean noUnicode4; // no Unicode in Java 1.4
 
     private void reset() {
         //System.out.println("reset() called");
@@ -2153,7 +2153,7 @@ public class MXParser
         return ch;
     }
 
-    private char[] charRefOneCharBuf = new char[1];
+    final private char[] charRefOneCharBuf = new char[1];
 
     private char[] parseEntityRef()
         throws XmlPullParserException, IOException
@@ -2209,9 +2209,10 @@ public class MXParser
                 }
             }
             posEnd = pos - 1;
+            char[] result = null;
             if (!noUnicode4) {
                 try {
-                    charRefOneCharBuf = Character.toChars(Integer.parseInt(sb.toString(), isHex ? 16 : 10));
+                    result = Character.toChars(Integer.parseInt(sb.toString(), isHex ? 16 : 10));
                 } catch (IllegalArgumentException e) {
                     throw new XmlPullParserException("character reference (with "
                         + (isHex ? "hex" : "decimal")
@@ -2231,13 +2232,13 @@ public class MXParser
                             + sb.toString()
                             + ") is not supported in this runtime", this, null);
                 }
-                charRefOneCharBuf = new char[1];
+                result = charRefOneCharBuf;
                 charRefOneCharBuf[0] = (char)i;
             }
             if(tokenize) {
-                text = newString(charRefOneCharBuf, 0, charRefOneCharBuf.length);
+                text = newString(result, 0, result.length);
             }
-            return charRefOneCharBuf;
+            return result;
         } else {
             // [68]     EntityRef          ::=          '&' Name ';'
             // scan name until ;

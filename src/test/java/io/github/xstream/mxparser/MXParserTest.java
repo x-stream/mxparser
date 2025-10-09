@@ -30,7 +30,6 @@ import org.junit.Test;
 
 /**
  * @author <a href="mailto:trygvis@inamo.no">Trygve Laugst&oslash;l</a>
- *
  */
 public class MXParserTest
 {
@@ -247,6 +246,27 @@ public class MXParserTest
             assertEquals( 1114109, parser.getText().codePointAt( 0 ) );
             assertEquals( XmlPullParser.ENTITY_REF, parser.nextToken() );
             assertEquals( 1114111, parser.getText().codePointAt( 0 ) );
+            assertEquals( XmlPullParser.END_TAG, parser.nextToken() );
+        }
+        catch ( XmlPullParserException e )
+        {
+            fail( "Should success since the input represents all legal character references" );
+        }
+    }
+
+    @Test
+    public void testAmpersandAfterSupplementaryCharacter()
+            throws Exception
+    {
+        MXParser parser = new MXParser();
+        String input = "<root>&amp; before, supplementary symbol &#1113101;, &amp; after</root>";
+        parser.setInput( new StringReader( input ) );
+
+        try
+        {
+            assertEquals( XmlPullParser.START_TAG, parser.nextToken() );
+            assertEquals( XmlPullParser.TEXT, parser.next() );
+            assertEquals( "& before, supplementary symbol \uDBFF\uDC0D, & after", parser.getText() );
             assertEquals( XmlPullParser.END_TAG, parser.nextToken() );
         }
         catch ( XmlPullParserException e )
