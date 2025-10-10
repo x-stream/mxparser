@@ -9,6 +9,11 @@ updates:
     directory: "/" # Location of package manifests
     schedule:
       interval: "monthly"
+    ignore:
+      - dependency-name: "org.apache.maven.plugins:*"
+        versions: ["[4.x,)"]
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"] 
   - package-ecosystem: "github-actions" # See documentation for possible values
     directory: "/" # Location of package manifests
     schedule:
