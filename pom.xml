@@ -642,7 +642,7 @@
     <version.plugin.sonatype.central-publishing>0.7.0</version.plugin.sonatype.central-publishing>
 
     <version.xmlpull>1.1.3.4a</version.xmlpull>
-    <version.junit>4.13.1</version.junit>
+    <version.junit>4.13.2</version.junit>
 
     <bundle.export.package>${jar.module.name};-noimport:=true</bundle.export.package>
     <bundle.import.package>*</bundle.import.package>
