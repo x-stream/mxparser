@@ -9,13 +9,21 @@ updates:
     directory: "/" # Location of package manifests
     schedule:
       interval: "monthly"
+    groups:
+      plugins:
+        patterns:
+          - "*:*-plugins"
     ignore:
       - dependency-name: "org.apache.maven.plugins:*"
-        versions: ["[4.x,)"]
+        versions: ["[4.x,)"] # These are for Maven 4
       - dependency-name: "*"
-        update-types: ["version-update:semver-major"]
+        update-types: ["version-update:semver-major"] # No MRs for major versions
     open-pull-requests-limit: 100
   - package-ecosystem: "github-actions" # See documentation for possible values
     directory: "/" # Location of package manifests
     schedule:
       interval: "monthly"
+    groups:
+      github-actions:
+        patterns:
+          - "*"
