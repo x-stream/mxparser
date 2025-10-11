@@ -157,14 +157,6 @@
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-eclipse-plugin</artifactId>
-          <configuration>
-            <downloadSources>true</downloadSources>
-            <projectNameTemplate>[artifactId]</projectNameTemplate>
-          </configuration>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-gpg-plugin</artifactId>
           <version>${version.plugin.maven.gpg}</version>
           <configuration>
@@ -362,6 +354,20 @@
           <extensions>true</extensions>
           <configuration>
             <publishingServerId>central</publishingServerId>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>io.wcm.devops.maven.plugins</groupId>
+          <artifactId>eclipse-maven-plugin</artifactId>
+          <version>${version.plugin.io.wcm.devops.eclipse}</version>
+          <configuration>
+            <downloadSources>true</downloadSources>
+            <projectNameTemplate>[artifactId]</projectNameTemplate>
+            <packaging>${eclipse.packaging}</packaging>
+            <skip>${eclipse.skip}</skip>
+            <classpathContainers>
+              <classpathContainer>${eclipse.classpathJreContainer}</classpathContainer>
+            </classpathContainers>
           </configuration>
         </plugin>
       </plugins>
@@ -619,6 +625,7 @@
     <version.java.test.target>1.5</version.java.test.target>
 
     <version.plugin.felix.bundle>2.5.4</version.plugin.felix.bundle>
+    <version.plugin.io.wcm.devops.eclipse>3.2.0</version.plugin.io.wcm.devops.eclipse>
     <version.plugin.maven.antrun>3.1.0</version.plugin.maven.antrun>
     <version.plugin.maven.changes>2.12.1</version.plugin.maven.changes>
     <version.plugin.maven.clean>3.5.0</version.plugin.maven.clean>
@@ -644,6 +651,9 @@
 
     <bundle.export.package>${jar.module.name};-noimport:=true</bundle.export.package>
     <bundle.import.package>*</bundle.import.package>
+    <eclipse.classpathJreContainer>org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8</eclipse.classpathJreContainer>
+    <eclipse.packaging>${project.packaging}</eclipse.packaging>
+    <eclipse.skip>false</eclipse.skip>
     <jar.module.name>io.github.xstream.mxparser</jar.module.name>
     <javadoc.link.javase>http://docs.oracle.com/javase/8/docs/api/</javadoc.link.javase>
   </properties>
