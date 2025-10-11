@@ -621,7 +621,7 @@
     <version.java.test.target>1.5</version.java.test.target>
 
     <version.plugin.felix.bundle>2.3.7</version.plugin.felix.bundle>
-    <version.plugin.maven.antrun>3.0.0</version.plugin.maven.antrun>
+    <version.plugin.maven.antrun>3.1.0</version.plugin.maven.antrun>
     <version.plugin.maven.changes>2.12.1</version.plugin.maven.changes>
     <version.plugin.maven.clean>3.1.0</version.plugin.maven.clean>
     <version.plugin.maven.compiler>3.8.0</version.plugin.maven.compiler>
